@@ -50,5 +50,11 @@ namespace StockTradingApp
             existingTrade.NumberSharesSold = updatedTrade.NumberSharesSold;
             existingTrade.ShareSellDate = updatedTrade.ShareSellDate;
         }
+
+        public int GetNextTradeId(int pTradeId)
+        {
+            int lastTradeId = Convert.ToInt32(_dbContext.Trades.SingleOrDefault(x=>x.TradeId == pTradeId));
+            return lastTradeId;
+        }
     }
 }

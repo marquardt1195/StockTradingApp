@@ -13,7 +13,7 @@
 {
     @if (pTradeId == null)  //Only show Trade table, unless pTradeId is present.
     {
-
+        <a href="combinedform/0" class="btn btn-success" @onclick="NewTrade">Initiate New Trade</a>
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
@@ -172,6 +172,9 @@ else
     [Parameter]
     public int? pTransactionId { get; set; }
 
+    [Parameter]
+    public int nextTradeId { get; set; } 
+
     public string title = "Add";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -244,6 +247,18 @@ else
     private void NewTransaction()
     {
         transaction = new Transaction();
+    }
+
+    private void NewTrade()
+    {
+        trade = new Trade();
+    }
+
+    private int GetNextTradeId(int pTradeId)
+    {
+        nextTradeId = tradeService.GetNextTradeId(pTradeId) + 1;
+        return nextTradeId;
+
     }
 }
 

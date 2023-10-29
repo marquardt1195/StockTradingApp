@@ -13,5 +13,7 @@ namespace StockTradingApp.Services
         void AddTrade(Trade trade);
 
         void DeleteTrade(int StockId);
+
+        int GetNextTradeId(int pTradeId);
     }
 }
