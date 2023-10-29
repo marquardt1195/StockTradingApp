@@ -29,7 +29,7 @@ namespace StockTradingApp.Services
 
         public Transaction GetTransactionById(int transactionId)
         {
-            return _dbContext.Transactions.FirstOrDefault(x => x.TransactionId == transactionId);
+            return _dbContext.Transactions.SingleOrDefault(x => x.TransactionId == transactionId);
         }
 
 

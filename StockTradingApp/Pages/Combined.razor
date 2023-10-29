@@ -9,11 +9,10 @@
 @inject ApplicationDbContext dbContext
 
 
-@if (tradeList.Any())
+@if (tradeList.Any())   //Show tradeList once rendered, otherwise show loading spinner.
 {
-    @if (pTradeId == null)
+    @if (pTradeId == null)  //Only show Trade table, unless pTradeId is present.
     {
-        <a href="combinedform/0" class="btn btn-success" @onclick="OnAdd">New Trade</a>
 
         <table class="table table-striped table-hover">
             <thead>
@@ -47,7 +46,7 @@
                         <td>@trade.ShareSellDate</td>
                         <td>
                             <button class="btn btn-primary btn-sm" @onclick="() => OnShowTransactions(trade.TradeId)">Modify Transactions</button>
-                            <button class="btn btn-danger btn-sm" @onclick="() => OnDelete(trade.TradeId)">Delete</button>
+                            <button class="btn btn-danger btn-sm" @onclick="() => OnDeleteTrade(trade.TradeId)">Delete</button>
                         </td>
                     </tr>
                 }
@@ -56,91 +55,94 @@
     }
     else
     {
-        <h3>Transactions</h3>
-
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Transaction ID</th>
-                    <th>Trade ID</th>
-                    <th>Stock Symbol</th>
-                    <th>Entry Price</th>
-                    <th># Shares Entered</th>
-                    <th>Entry Date</th>
-                    <th>Exit Price</th>
-                    <th># Shares Exited</th>
-                    <th>Exit Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var trans in transactionList)
-                {
+        <h3>Transactions for Trade @pTradeId</h3>
+        @if (pTransactionId == null)    //Only show transaction table, unless pTransactionId is present.
+        {
+            <table class="table table-hover">
+                <thead>
                     <tr>
-                        <td>@trans.TransactionId</td>
-                        <td>@trans.TradeId</td>
-                        <td>@trans.StockSymbol</td>
-                        <td>@trans.EntryPrice</td>
-                        <td>@trans.NumberSharesEntered</td>
-                        <td>@trans.EntryDate</td>
-                        <td>@trans.SellPrice</td>
-                        <td>@trans.NumberSharesExited</td>
-                        <td>@trans.ExitDate</td>
-                        <td>
-                            <button class="btn btn-primary btn-sm" @onclick="() => OnEdit(trans.TradeId, trans.TransactionId)">Edit</button>
-                            <button class="btn btn-danger btn-sm" @onclick="() => OnDelete(trade.TradeId)">Delete</button>
-                        </td>
+                        <th>Transaction ID</th>
+                        <th>Trade ID</th>
+                        <th>Stock Symbol</th>
+                        <th>Entry Price</th>
+                        <th># Shares Entered</th>
+                        <th>Entry Date</th>
+                        <th>Exit Price</th>
+                        <th># Shares Exited</th>
+                        <th>Exit Date</th>
+                        <th>Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-
-        <div>
-            <button class="btn btn-success" @onclick="NewTransaction">New Transaction</button>
-        </div>
-
-        <h3>@title Transaction</h3>
-        <div class="row">
-            <div class="col-sm-2">
-                <EditForm Model="transaction" OnValidSubmit="()=>HandleValidSubmit(transaction.TradeId)">
-                    <DataAnnotationsValidator></DataAnnotationsValidator>
-                    <ValidationSummary></ValidationSummary>
-                    <div class="form-group">
-                        <label for="TradeId">Trade Id</label>
-                        <InputNumber class="form-control" @bind-Value="transaction.TradeId"></InputNumber>
-                    </div>
-                    <div class="form-group">
-                        <label for="StockSymbol">Stock Symbol</label>
-                        <InputText class="form-control" @bind-Value="transaction.StockSymbol"></InputText>
-                    </div>
-                    <div class="form-group">
-                        <label for="EntryPrice">Entry Price</label>
-                        <InputNumber class="form-control" @bind-Value="transaction.EntryPrice"></InputNumber>
-                    </div>
-                    <div class="form-group">
-                        <label for="NumberSharesEntered">Number Shares Entered</label>
-                        <InputNumber class="form-control" @bind-Value="transaction.NumberSharesEntered"></InputNumber>
-                    </div>
-                    <div class="form-group">
-                        <label for="EntryDate">Entry Date</label>
-                        <InputDate class="form-control" @bind-Value="transaction.EntryDate"></InputDate>
-                    </div>
-                    <div class="form-group">
-                        <label for="SellPrice">Exit Price</label>
-                        <InputNumber class="form-control" @bind-Value="transaction.SellPrice"></InputNumber>
-                    </div>
-                    <div class="form-group">
-                        <label for="NumberSharesExited">Number Shares Exited</label>
-                        <InputNumber class="form-control" @bind-Value="transaction.NumberSharesExited"></InputNumber>
-                    </div>
-                    <div class="form-group">
-                        <label for="ExitDate">Exit Date</label>
-                        <InputDate class="form-control" @bind-Value="transaction.ExitDate"></InputDate>
-                    </div><br />
-                    <button type="submit" class="btn-primary btn-sm">Update</button>
-                </EditForm>
+                </thead>
+                <tbody>
+                    @foreach (var trans in transactionList)
+                    {
+                        <tr>
+                            <td>@trans.TransactionId</td>
+                            <td>@trans.TradeId</td>
+                            <td>@trans.StockSymbol</td>
+                            <td>@trans.EntryPrice</td>
+                            <td>@trans.NumberSharesEntered</td>
+                            <td>@trans.EntryDate</td>
+                            <td>@trans.SellPrice</td>
+                            <td>@trans.NumberSharesExited</td>
+                            <td>@trans.ExitDate</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" @onclick="() => OnEdit(trans.TradeId, trans.TransactionId)">Edit</button>
+                                <button class="btn btn-danger btn-sm" @onclick="() => OnDeleteTransaction(trans.TransactionId, trans.TradeId)">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>      <div>
+                <a href="combinedform/@pTradeId/0" class="btn btn-success" @onclick="NewTransaction">New Transaction</a>
             </div>
-        </div>
+        }
+        else
+        {
+            <h3>@title Transaction</h3>
+            <div class="row">
+                <div class="col-sm-2">
+                    <EditForm Model="transaction" OnValidSubmit="()=>HandleValidSubmit(transaction.TradeId)">
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
+                        <ValidationSummary></ValidationSummary>
+                        <div class="form-group">
+                            <label for="TradeId">Trade Id</label>
+                            <InputNumber class="form-control" @bind-Value="transaction.TradeId"></InputNumber>
+                        </div>
+                        <div class="form-group">
+                            <label for="StockSymbol">Stock Symbol</label>
+                            <InputText class="form-control" @bind-Value="transaction.StockSymbol"></InputText>
+                        </div>
+                        <div class="form-group">
+                            <label for="EntryPrice">Entry Price</label>
+                            <InputNumber class="form-control" @bind-Value="transaction.EntryPrice"></InputNumber>
+                        </div>
+                        <div class="form-group">
+                            <label for="NumberSharesEntered">Number Shares Entered</label>
+                            <InputNumber class="form-control" @bind-Value="transaction.NumberSharesEntered"></InputNumber>
+                        </div>
+                        <div class="form-group">
+                            <label for="EntryDate">Entry Date</label>
+                            <InputDate class="form-control" @bind-Value="transaction.EntryDate"></InputDate>
+                        </div>
+                        <div class="form-group">
+                            <label for="SellPrice">Exit Price</label>
+                            <InputNumber class="form-control" @bind-Value="transaction.SellPrice"></InputNumber>
+                        </div>
+                        <div class="form-group">
+                            <label for="NumberSharesExited">Number Shares Exited</label>
+                            <InputNumber class="form-control" @bind-Value="transaction.NumberSharesExited"></InputNumber>
+                        </div>
+                        <div class="form-group">
+                            <label for="ExitDate">Exit Date</label>
+                            <InputDate class="form-control" @bind-Value="transaction.ExitDate"></InputDate>
+                        </div><br />
+                        <button type="submit" class="btn-primary btn-sm">Update</button>
+                    </EditForm>
+                </div>
+            </div>
+        }
+
 
     }
 }
@@ -192,9 +194,16 @@ else
         trade = new Trade();
     }
 
-    private async void OnDelete(int TradeId)
+    private async void OnDeleteTransaction(int transactionId, int pTradeId)
     {
-        tradeService.DeleteTrade(TradeId);
+        transactionService.DeleteTransaction(transactionId);
+        transactionList = await transactionService.GetTransactionByTradeId(pTradeId);
+        NavigationManager.NavigateTo($"/combinedform/{pTradeId}");
+    }
+
+    private async void OnDeleteTrade(int tradeId)
+    {
+        tradeService.DeleteTrade(tradeId);
         tradeList = await tradeService.GetAllTrades();
     }
 
