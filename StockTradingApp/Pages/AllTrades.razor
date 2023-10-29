@@ -1,0 +1,170 @@
+﻿@page "/trades"
+@page "/tradeform/{pTradeId:int?}"
+@using Services;
+@using Data;
+@inject ITradeService tradeService
+@inject NavigationManager NavigationManager
+@inject ApplicationDbContext dbContext
+
+
+@if (tradeList.Any())
+{
+    @if (pTradeId == null)
+    {
+        <a href="tradeform/0" class="btn btn-success" @onclick="OnAdd">Add Trade</a>
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Trade ID</th>
+                    <th>Stock Symbol</th>
+                    <th>Buy Price</th>
+                    <th># Shares Bought</th>
+                    <th>Share Buy Date</th>
+                    <th>Dollar Stop Loss</th>
+                    <th>Sell Price</th>
+                    <th># Shares Sold</th>
+                    <th>Share Sell Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var trade in tradeList)
+                {
+                    <tr>
+                        <td>@trade.TradeId</td>
+                        <td>@trade.StockSymbol</td>
+                        <td>@trade.BuyPrice</td>
+                        <td>@trade.NumberSharesBought</td>
+                        <td>@trade.ShareBuyDate</td>
+                        <td>@trade.DollarStopLoss</td>
+                        <td>@trade.SellPrice</td>
+                        <td>@trade.NumberSharesSold</td>
+                        <td>@trade.ShareSellDate</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" @onclick="()=>OnEdit(trade.TradeId)">Edit</button>
+                            <button class="btn btn-danger btn-sm" @onclick="() => OnDelete(trade.TradeId)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h3>@title Trade</h3>
+        <div class="row">
+            <div class="col-sm-2">
+                <EditForm Model="trade" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator></DataAnnotationsValidator>
+                    <ValidationSummary></ValidationSummary>
+                    <div class="form-group">
+                        <label for="StockSymbol">Stock Symbol</label>
+                        <InputText class="form-control" @bind-Value="trade.StockSymbol"></InputText>
+                    </div>
+                    <div class="form-group">
+                        <label for="BuyPrice">BuyPrice</label>
+                        <InputNumber class="form-control" @bind-Value="trade.BuyPrice"></InputNumber>
+                    </div>
+                    <div class="form-group">
+                        <label for="NumberSharesBought">NumberSharesBought</label>
+                        <InputNumber class="form-control" @bind-Value="trade.NumberSharesBought"></InputNumber>
+                    </div>
+                    <div class="form-group">
+                        <label for="ShareBuyDate">ShareBuyDate</label>
+                        <InputDate class="form-control" @bind-Value="trade.ShareBuyDate"></InputDate>
+                    </div>
+                    <div class="form-group">
+                        <label for="DollarStopLoss">DollarStopLoss</label>
+                        <InputNumber class="form-control" @bind-Value="trade.DollarStopLoss"></InputNumber>
+                    </div>
+                    <div class="form-group">
+                        <label for="SellPrice">SellPrice</label>
+                        <InputNumber class="form-control" @bind-Value="trade.SellPrice"></InputNumber>
+                    </div>
+                    <div class="form-group">
+                        <label for="NumberSharesSold">NumberSharesSold</label>
+                        <InputNumber class="form-control" @bind-Value="trade.NumberSharesSold"></InputNumber>
+                    </div>
+                    <div class="form-group">
+                        <label for="ShareSellDate">ShareSellDate</label>
+                        <InputDate class="form-control" @bind-Value="trade.ShareSellDate"></InputDate>
+                    </div><br />
+                    <button type="submit" class="btn-primary btn-sm">Update</button>
+                </EditForm>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="text-center">
+        <img src="/images/smallLoading.gif">
+    </div>
+}
+
+
+
+@code {
+    public bool isLoading { get; set; } = true;
+
+    private List<Trade> tradeList = new List<Trade>();
+
+    public Trade trade { get; set; } = new Trade();
+
+    [Parameter]
+    public int? pTradeId { get; set; }
+
+    public string title = "Add";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            LoadTrades();
+        }
+    }
+
+    private async Task LoadTrades()
+    {
+        tradeList = await tradeService.GetAllTrades();
+        isLoading = false;
+        StateHasChanged();
+    }
+
+    private void OnAdd()
+    {
+        trade = new Trade();
+    }
+
+    private async void OnDelete(int TradeId)
+    {
+        tradeService.DeleteTrade(TradeId);
+        tradeList = await tradeService.GetAllTrades();
+    }
+
+    private void OnEdit(int pTradeId)
+    {
+        if (pTradeId > 0)
+        {
+            title = "Edit";
+        }
+        trade = tradeService.GetTradeById(pTradeId);
+        NavigationManager.NavigateTo($"/tradeform/{pTradeId}");
+    }
+
+    private async void HandleValidSubmit()
+    {
+        if (trade.TradeId == 0)
+        {
+            tradeService.AddTrade(trade);
+        }
+        else
+        {
+            tradeService.UpdateTrade(trade);
+        }
+        NavigationManager.NavigateTo("/trades");
+        dbContext.SaveChanges();
+        tradeList = await tradeService.GetAllTrades();
+    }
+}

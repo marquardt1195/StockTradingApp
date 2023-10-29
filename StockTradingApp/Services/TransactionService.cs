@@ -1,0 +1,59 @@
+﻿using Microsoft.EntityFrameworkCore;
+using StockTradingApp.Data;
+
+namespace StockTradingApp.Services
+{
+    public class TransactionService : ITransactionService
+    {
+        private readonly ApplicationDbContext _dbContext;
+
+        public TransactionService(ApplicationDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public async Task<List<Transaction>> GetAllTransactions()
+        {
+            return _dbContext.Transactions.ToList();
+        }
+
+        public async Task<List<Transaction>> GetTransactionByTradeId(int pTradeId)
+        {
+            return _dbContext.Transactions.Where(x => x.TradeId == pTradeId).ToList();
+        }
+
+        public void AddTransaction(Transaction transaction)
+        {
+            _dbContext.Transactions.Add(transaction);
+        }
+
+        public Transaction GetTransactionById(int transactionId)
+        {
+            return _dbContext.Transactions.FirstOrDefault(x => x.TransactionId == transactionId);
+        }
+
+
+        public void DeleteTransaction(int transactionId)
+        {
+            var transaction = GetTransactionById(transactionId);
+            _dbContext.Transactions.Remove(transaction);
+            _dbContext.SaveChanges();
+        }
+
+        public void UpdateTransaction(Transaction updatedTransaction)
+        {
+            var existingTransaction = GetTransactionById(updatedTransaction.TransactionId);
+
+            existingTransaction.TransactionId = updatedTransaction.TransactionId;
+            existingTransaction.TradeId = updatedTransaction.TradeId;
+            existingTransaction.StockSymbol = updatedTransaction.StockSymbol;
+            existingTransaction.EntryPrice = updatedTransaction.EntryPrice;
+            existingTransaction.NumberSharesEntered = updatedTransaction.NumberSharesEntered;
+            existingTransaction.EntryDate = updatedTransaction.EntryDate;
+            existingTransaction.SellPrice = updatedTransaction.SellPrice;
+            existingTransaction.NumberSharesExited = updatedTransaction.NumberSharesExited;
+            existingTransaction.ExitDate = updatedTransaction.ExitDate;
+        }
+    }
+}
+
