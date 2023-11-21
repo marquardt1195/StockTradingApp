@@ -285,15 +285,11 @@ else
         {
             transactionService.UpdateTransaction(transaction);
         }
-        dbContext.SaveChanges();
+        dbContext.SaveChanges();    //once SaveChanges, then transactionId incremented by 1. 0 before this point.
         transactionList = await transactionService.GetTransactionByTradeId(pTradeId);
         NavigationManager.NavigateTo($"/combinedform/{pTradeId}");
     }
 
-    private async void HandleNewTransaction(int pTradeId)
-    {
-        
-    }
 
     private async Task OnShowTransactions(int pTradeId)
     {
@@ -319,37 +315,18 @@ else
         trade = new Trade();
     }
 
-    // private async void HandleNewTrade()
-    // {
-    //     if (trade.TradeId == 0)
-    //     {
-    //         transactionService.AddTransaction(transaction);
-    //     }
-    //     else
-    //     {
-    //         tradeService.UpdateTrade(trade);
-    //     }
-    //     dbContext.SaveChanges();
-    //     transactionList = await transactionService.GetAllTransactions();
-    //     NavigationManager.NavigateTo("/combined");
-    // }
 
-     private int GetLastTradeId()
-     {
-         if (transactionList.Count > 0)
-         {
-             int maxTradeId = transactionList.Max(transaction => transaction.TradeId);
-             return maxTradeId;
-         }
-         else
-         {
-             return 0; 
-         }
-     }
-
-    // public void InitiateNewTrans()
-    // {
-    //     NewTradeForm = true;
-    // }
+     // private int GetLastTradeId()
+     // {
+     //     if (transactionList.Count > 0)
+     //     {
+     //         int maxTradeId = transactionList.Max(transaction => transaction.TradeId);
+     //         return maxTradeId;
+     //     }
+     //     else
+     //     {
+     //         return 0; 
+     //     }
+     // }
 }
 
