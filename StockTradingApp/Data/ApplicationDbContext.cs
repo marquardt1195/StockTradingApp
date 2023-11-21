@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StockTradingApp.Data.ViewModels;
 
 namespace StockTradingApp.Data
 {
@@ -13,23 +14,20 @@ namespace StockTradingApp.Data
         {
         }
 
-        public virtual DbSet<Trade> Trades { get; set; }
+        public DbSet<Trade> Trades { get; set; }
 
         public DbSet<Transaction> Transactions { get; set; }
+
+        //public DbSet<TradeViewModel> TradeViewModel { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Your entity configurations should go here
             modelBuilder.Entity<Trade>()
                 .HasMany(t => t.Transactions)
                 .WithOne(t => t.Trade)
                 .HasForeignKey(t => t.TradeId);
-
-            // Other entity configurations...
-
-            // This is where you configure the relationships and other settings.
         }
     }
 

@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StockTradingApp.Data;
+using StockTradingApp.Data.ViewModels;
+using System.Linq;
 
 namespace StockTradingApp.Services
 {
@@ -42,9 +44,9 @@ namespace StockTradingApp.Services
 
         public void UpdateTransaction(Transaction updatedTransaction)
         {
-            var existingTransaction = GetTransactionById(updatedTransaction.TransactionId);
+            var existingTransaction = GetTransactionById(Convert.ToInt32(updatedTransaction.TransactionId));
 
-            existingTransaction.TransactionId = updatedTransaction.TransactionId;
+            //existingTransaction.TransactionId = updatedTransaction.TransactionId;
             existingTransaction.TradeId = updatedTransaction.TradeId;
             existingTransaction.StockSymbol = updatedTransaction.StockSymbol;
             existingTransaction.EntryPrice = updatedTransaction.EntryPrice;
@@ -54,6 +56,15 @@ namespace StockTradingApp.Services
             existingTransaction.NumberSharesExited = updatedTransaction.NumberSharesExited;
             existingTransaction.ExitDate = updatedTransaction.ExitDate;
         }
+
+       // public Task<IEnumerable<TradeViewModel>> TradeTransactionCalculations(int tradeId)
+       // {
+       //     var transactions = GetTransactionByTradeId(tradeId);
+       //
+       //     var tradeViewModels = transactions
+       //
+       //
+       // }
     }
 }
 

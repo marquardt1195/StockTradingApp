@@ -3,6 +3,7 @@
 @using Services;
 @using Data;
 @inject ITradeService tradeService
+@inject ITransactionService transactionService
 @inject NavigationManager NavigationManager
 @inject ApplicationDbContext dbContext
 
@@ -46,7 +47,7 @@
                             <button class="btn btn-danger btn-sm" @onclick="() => OnDelete(trade.TradeId)">Delete</button>
                         </td>
                     </tr>
-                }
+                } 
             </tbody>
         </table>
     }
@@ -110,7 +111,11 @@ else
 
     private List<Trade> tradeList = new List<Trade>();
 
+    private List<Transaction> transactionList = new List<Transaction>();
+
     public Trade trade { get; set; } = new Trade();
+
+    public Transaction transaction { get; set; } = new Transaction();
 
     [Parameter]
     public int? pTradeId { get; set; }
@@ -128,6 +133,13 @@ else
     private async Task LoadTrades()
     {
         tradeList = await tradeService.GetAllTrades();
+        isLoading = false;
+        StateHasChanged();
+    }
+
+    private async Task LoadTransactions()
+    {
+        transactionList = await transactionService.GetAllTransactions();
         isLoading = false;
         StateHasChanged();
     }
@@ -163,8 +175,8 @@ else
         {
             tradeService.UpdateTrade(trade);
         }
-        NavigationManager.NavigateTo("/trades");
         dbContext.SaveChanges();
-        tradeList = await tradeService.GetAllTrades();
+        transactionList = await transactionService.GetAllTransactions();
+        NavigationManager.NavigateTo("/combined");
     }
 }

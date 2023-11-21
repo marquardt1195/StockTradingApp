@@ -1,4 +1,5 @@
 ﻿using StockTradingApp.Data;
+using StockTradingApp.Data.ViewModels;
 
 namespace StockTradingApp.Services
 {
@@ -15,5 +16,7 @@ namespace StockTradingApp.Services
         void AddTransaction(Transaction transaction);
 
         void DeleteTransaction(int transactionId);
+
+       // public Task<IEnumerable<TradeViewModel>> TradeTransactionCalculations(int tradeId);
     }
 }

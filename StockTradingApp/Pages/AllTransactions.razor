@@ -46,16 +46,35 @@
                             <button class="btn btn-danger btn-sm" @onclick="() => OnDelete(trans.TransactionId)">Delete</button>
                         </td>
                     </tr>
-                }
+                } 
+
+@*                 @foreach (var trans in transactionList.GroupBy(trans => trans.TradeId))
+                {
+
+                    <tr>
+                        <td>@trans.Key</td>
+                        <td>@trans.First().StockSymbol</td>
+                        <td>@trans.Average(trans => trans.EntryPrice)</td>
+                        <td>@trans.Sum(trans => trans.NumberSharesEntered)</td>
+                        <td>@trans.First().EntryDate</td>
+                        <td>@trans.First().EntryPrice</td>  @* stop loss 
+                        <td>@trans.Average(trans => trans.SellPrice)</td>
+                        <td>@trans.Sum(trans => trans.NumberSharesExited)</td>
+                        <td>@trans.Last().ExitDate</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" >Edit</button>
+                        </td> 
+                    </tr>
+                } *@
             </tbody>
-        </table><hr />
+        </table>
     }
     else
     {
         <h3>@title Transaction</h3>
         <div class="row">
             <div class="col-sm-2">
-                <EditForm Model="transaction" OnValidSubmit="HandleValidSubmit">
+                <EditForm Model="transaction" OnValidSubmit="HandleNewSubmit">
                     <DataAnnotationsValidator></DataAnnotationsValidator>
                     <ValidationSummary></ValidationSummary>
                     <div class="form-group">
@@ -119,6 +138,8 @@ else
     [Parameter]
     public int? pTradeId { get; set; }
 
+    private bool NewTradeForm { get; set; } = false;
+
     public bool isLoading { get; set; } = true;
 
     private List<Transaction> transactionList = new List<Transaction>();
@@ -144,7 +165,15 @@ else
 
     private void OnAdd()
     {
-        title = "Add";
+        // if (pTradeId == null || pTradeId == 0)
+        // {
+        //     NewTradeForm = true;
+        //     title = "Add";
+        //     pTradeId = GetLastTradeId();
+        // }
+        // transaction.TradeId = Convert.ToInt32(@pTradeId++);
+        // transaction = new Transaction();
+
         transaction = new Transaction();
     }
 
@@ -177,6 +206,34 @@ else
         NavigationManager.NavigateTo("/transactions");
         dbContext.SaveChanges();
         transactionList = await transactionService.GetAllTransactions();
+    }
+
+    private async void HandleNewSubmit()
+    {
+        if (transaction.TransactionId == 0 || transaction.TransactionId == null)
+        {
+            transactionService.AddTransaction(transaction);
+        }
+        else
+        {
+            transactionService.UpdateTransaction(transaction);
+        }
+        NavigationManager.NavigateTo("/transactions");
+        dbContext.SaveChanges();
+        transactionList = await transactionService.GetAllTransactions();
+    }
+
+    private int GetLastTradeId()
+    {
+        if (transactionList.Count > 0)
+        {
+            int maxTradeId = transactionList.Max(transaction => transaction.TradeId);
+            return maxTradeId;
+        }
+        else
+        {
+            return 0;
+        }
     }
 
 }

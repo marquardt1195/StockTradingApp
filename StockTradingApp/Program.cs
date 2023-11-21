@@ -1,9 +1,11 @@
+using Blazored.Modal;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using StockTradingApp;
 using StockTradingApp.Data;
 using StockTradingApp.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
 builder.Services.AddTransient<ITradeService, TradeService>();
 builder.Services.AddTransient<ITransactionService, TransactionService>();
+builder.Services.AddBlazoredModal();
 
 var app = builder.Build();
 
