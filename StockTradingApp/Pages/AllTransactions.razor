@@ -52,25 +52,6 @@
                             </td>
                         </tr>
                     } 
-
-@*                     @foreach (var trans in transactionList.GroupBy(trans => trans.TradeId))
-                    {
-
-                        <tr>
-                            <td>@trans.Key</td>
-                            <td>@trans.First().StockSymbol</td>
-                            <td>@trans.Average(trans => trans.EntryPrice)</td>
-                            <td>@trans.Sum(trans => trans.NumberSharesEntered)</td>
-                            <td>@trans.First().EntryDate</td>
-                            <td>@trans.First().EntryPrice</td>  @* stop loss 
-                            <td>@trans.Average(trans => trans.SellPrice)</td>
-                            <td>@trans.Sum(trans => trans.NumberSharesExited)</td>
-                            <td>@trans.Last().ExitDate</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" >Edit</button>
-                            </td> 
-                        </tr>
-                    } *@
                 </tbody>
             </table>
         </div>
@@ -83,7 +64,7 @@
                 <EditForm Model="transaction" OnValidSubmit="HandleNewSubmit">
                     <DataAnnotationsValidator></DataAnnotationsValidator>
                     <ValidationSummary></ValidationSummary>
-                    <div class="form-group">
+@*                     <div class="form-group">
                         <label for="TransactionId">Transaction Id</label>
                         <InputSelect class="form-control" @bind-Value="transaction.TransactionId">
                             @foreach(var item in transactionList)
@@ -91,7 +72,7 @@
                             <option value="@item.TransactionId">@item.TransactionId</option>
                             }
                         </InputSelect>
-                    </div>
+                    </div> *@
                     <div class="form-group">
                         <label for="TradeId">Trade Id</label>
                         <InputNumber class="form-control" @bind-Value="transaction.TradeId"></InputNumber>
@@ -180,7 +161,7 @@ else
         // transaction.TradeId = Convert.ToInt32(@pTradeId++);
         // transaction = new Transaction();
 
-        transaction = new Transaction();
+        transaction = new Transaction {TradeId = transaction.TradeId};
     }
 
     private async void OnDelete(int TransactionId)
@@ -199,20 +180,20 @@ else
         NavigationManager.NavigateTo($"/transactionform/{pTransactionId}");
     }
 
-    private async void HandleValidSubmit()
-    {
-        if (transaction.TradeId == 0)
-        {
-            transactionService.AddTransaction(transaction);
-        }
-        else
-        {
-            transactionService.UpdateTransaction(transaction);
-        }
-        NavigationManager.NavigateTo("/transactions");
-        dbContext.SaveChanges();
-        transactionList = await transactionService.GetAllTransactions();
-    }
+    // private async void HandleValidSubmit()
+    // {
+    //     if (transaction.TradeId == 0)
+    //     {
+    //         transactionService.AddTransaction(transaction);
+    //     }
+    //     else
+    //     {
+    //         transactionService.UpdateTransaction(transaction);
+    //     }
+    //     NavigationManager.NavigateTo("/transactions");
+    //     dbContext.SaveChanges();
+    //     transactionList = await transactionService.GetAllTransactions();
+    // }
 
     private async void HandleNewSubmit()
     {

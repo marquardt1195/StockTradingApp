@@ -146,7 +146,8 @@
                         </tr>
                     }
                 </tbody>
-            </table>      <div>
+            </table>      
+            <div>
                 <a href="combinedform/@pTradeId/0" class="btn btn-success" @onclick="NewTransaction">New Transaction</a>
             </div>
         }
@@ -278,7 +279,6 @@ else
             transaction = transactionService.GetTransactionById(pTransactionId);
             NavigationManager.NavigateTo($"/combinedform/{pTradeId}/{pTransactionId}");
         }
-
     }
 
     private async void HandleValidSubmit(int pTradeId, int pTransactionId)
@@ -295,9 +295,7 @@ else
         dbContext.SaveChanges();    //once SaveChanges, then transactionId incremented by 1. 0 before this point.
         NavigationManager.NavigateTo($"/combinedform");
         transactionList = await transactionService.GetTransactionByTradeId(pTradeId);
-
     }
-
 
     private async Task OnShowTransactions(int pTradeId)
     {
@@ -309,13 +307,8 @@ else
 
     private void NewTransaction()
     {
-        //if(pTradeId == null || pTradeId == 0)
-        //{
-            NewTradeForm = true;
-            title = "New";
-            //pTradeId = GetLastTradeId();
-        //}
-        //trade.TradeId = Convert.ToInt32(@pTradeId++);
+        NewTradeForm = true;
+        title = "New";
         transaction = new Transaction { TradeId = transaction.TradeId };
     }
 
@@ -323,19 +316,5 @@ else
     {
         trade = new Trade();
     }
-
-
-     // private int GetLastTradeId()
-     // {
-     //     if (transactionList.Count > 0)
-     //     {
-     //         int maxTradeId = transactionList.Max(transaction => transaction.TradeId);
-     //         return maxTradeId;
-     //     }
-     //     else
-     //     {
-     //         return 0; 
-     //     }
-     // }
 }
 
