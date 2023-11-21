@@ -16,7 +16,7 @@ namespace StockTradingApp.Services
 
         public async Task<List<Transaction>> GetAllTransactions()
         {
-            return _dbContext.Transactions.ToList();
+            return _dbContext.Transactions.OrderByDescending(transactions => transactions.TransactionId).ToList();
         }
 
         public async Task<List<Transaction>> GetTransactionByTradeId(int pTradeId)

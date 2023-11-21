@@ -16,7 +16,7 @@ namespace StockTradingApp
 
         public async Task<List<Trade>> GetAllTrades()
         {
-            return _dbContext.Trades.ToList();
+            return _dbContext.Trades.OrderByDescending(trade => trade.TradeId).ToList();
         }
 
         public void AddTrade(Trade trade)

@@ -9,13 +9,18 @@
 @inject NavigationManager NavigationManager
 @inject ApplicationDbContext dbContext
 
-
+<style>
+    .table-responsive {
+        max-height:500px;
+    }
+</style>
 @if (transactionList.Any())
 {
     @if (pTradeId == null)  //Only show Trade table, unless pTradeId is present.
     {
-        <a href="combinedform/0" class="btn btn-success" @onclick="NewTransaction">Initiate New Trade</a>
-        <table class="table table-striped table-hover">
+        @* <a href="combinedform/0" class="btn btn-success" @onclick="NewTransaction">Initiate New Trade</a> *@
+        <div class="table-responsive">
+        <table class="table table-striped table-hover table-responsive">
             <thead>
                 <tr>
                     <th>Trade ID</th>
@@ -53,6 +58,7 @@
                 }
             </tbody>
         </table>
+        </div>
     }
     else if (NewTradeForm)
     {    
@@ -62,10 +68,10 @@
                 <EditForm Model="transaction" OnValidSubmit="()=>HandleValidSubmit(transaction.TradeId, transaction.TransactionId)">
                     <DataAnnotationsValidator></DataAnnotationsValidator>
                     <ValidationSummary></ValidationSummary>
-@*                     <div class="form-group">
+                     <div class="form-group">
                         <label for="TradeId">Trade Id</label>
-                        <InputNumber class="form-control" @bind-Value="transaction.TradeId"></InputNumber>
-                    </div> *@
+                        <InputNumber class="form-control" @bind-Value="transaction.TradeId" readonly="true"></InputNumber>
+                    </div> 
                     <div class="form-group">
                         <label for="StockSymbol">Stock Symbol</label>
                         <InputText class="form-control" @bind-Value="transaction.StockSymbol"></InputText>
@@ -154,8 +160,8 @@
                         <ValidationSummary></ValidationSummary>
                         <div class="form-group">
                             <label for="TradeId">Trade Id</label>
-                            <InputNumber class="form-control" @bind-Value="transaction.TradeId"></InputNumber>
-                        </div> 
+                            <InputNumber class="form-control" @bind-Value="transaction.TradeId" readonly="true"></InputNumber>
+                        </div>  
                         <div class="form-group">
                             <label for="StockSymbol">Stock Symbol</label>
                             <InputText class="form-control" @bind-Value="transaction.StockSymbol"></InputText>
@@ -279,6 +285,7 @@ else
     {
         if(pTransactionId == 0 || pTransactionId == null)
         {
+            transaction.TradeId = pTradeId;
             transactionService.AddTransaction(transaction);
         }
         else
@@ -286,28 +293,30 @@ else
             transactionService.UpdateTransaction(transaction);
         }
         dbContext.SaveChanges();    //once SaveChanges, then transactionId incremented by 1. 0 before this point.
+        NavigationManager.NavigateTo($"/combinedform");
         transactionList = await transactionService.GetTransactionByTradeId(pTradeId);
-        NavigationManager.NavigateTo($"/combinedform/{pTradeId}");
+
     }
 
 
     private async Task OnShowTransactions(int pTradeId)
     {
         transaction = new Transaction();
+        transaction.TradeId = pTradeId;
         transactionList = await transactionService.GetTransactionByTradeId(pTradeId);
         NavigationManager.NavigateTo($"/combinedform/{pTradeId}");
     }
 
     private void NewTransaction()
     {
-        if(pTradeId == null || pTradeId == 0)
-        {
+        //if(pTradeId == null || pTradeId == 0)
+        //{
             NewTradeForm = true;
             title = "New";
             //pTradeId = GetLastTradeId();
-        }
+        //}
         //trade.TradeId = Convert.ToInt32(@pTradeId++);
-        transaction = new Transaction();
+        transaction = new Transaction { TradeId = transaction.TradeId };
     }
 
     private void NewTrade()
