@@ -16,12 +16,12 @@ namespace StockTradingApp.Services
 
         public async Task<List<Transaction>> GetAllTransactions()
         {
-            return _dbContext.Transactions.OrderByDescending(transactions => transactions.TransactionId).ToList();
+            return _dbContext.Transactions.OrderByDescending(transactions => transactions.TradeId).ToList();
         }
 
         public async Task<List<Transaction>> GetTransactionByTradeId(int pTradeId)
         {
-            return _dbContext.Transactions.Where(x => x.TradeId == pTradeId).ToList();
+            return _dbContext.Transactions.Where(x => x.TradeId == pTradeId).OrderByDescending(transactions => transactions.TradeId).ToList();
         }
 
         public void AddTransaction(Transaction transaction)
