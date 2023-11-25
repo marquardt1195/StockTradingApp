@@ -9,6 +9,14 @@
 @inject IModalService Modal
 
 
+<style>
+    .modalBackdrop {
+        height: 100vh;
+        width: 100vw;
+        background-color: rgba(0,0,0,0.6);
+    }
+</style>
+
 @if (tradeList.Any())
 {
     <button class="btn btn-success" @onclick="OnAdd">Initiate New Trade</button>
@@ -54,9 +62,9 @@
 
     @if (ShowNewTrade)
     {
-        <div class="modal fade show d-block" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
+        <div class="modal show d-block">
+            <div class="modal-dialog-centered modalBackdrop">
+                <div class="modal-content modal-dialog">
                     <div class="modal-header">
                         <h5 class="modal-title" id="staticBackdropLabel">@title Trade</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="(() => CloseEditModal())"></button>
@@ -115,9 +123,9 @@ else
 
 @if (Show)
 {
-    <div class="modal fade show d-block" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
+    <div class="modal fade show d-block">
+        <div class="modal-dialog-centered modalBackdrop">
+            <div class="modal-content modal-dialog">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">@title Transaction</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="(() => CloseModal())"></button>

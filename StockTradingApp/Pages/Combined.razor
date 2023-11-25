@@ -13,11 +13,16 @@
     .table-responsive {
         max-height: 500px;
     }
+
+    .modalBackdrop {
+        height: 100vh;
+        background-color: rgba(0,0,0,0.5);
+    }
 </style>
 @if (transactionList.Any())
 {
-    @if (pTradeId == null)
-    {
+@*     @if (pTradeId == null)
+    { *@
         <div class="table-responsive">
             <table class="table table-striped table-hover table-responsive">
                 <thead>
@@ -60,48 +65,64 @@
             </table>
         </div>
         <br />
-    }
+@*     }
 
     else
+    { *@
+@*         <h3>Transactions for Trade @pTradeId</h3> *@
+    @if(ShowEditTransactionModal)
     {
-        <h3>Transactions for Trade @pTradeId</h3>
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Transaction ID</th>
-                        <th>Trade ID</th>
-                        <th>Stock Symbol</th>
-                        <th>Entry Price</th>
-                        <th># Shares Entered</th>
-                        <th>Entry Date</th>
-                        <th>Exit Price</th>
-                        <th># Shares Exited</th>
-                        <th>Exit Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var trans in transactionList)
-                    {
-                        <tr>
-                            <td>@trans.TransactionId</td>
-                            <td>@trans.TradeId</td>
-                            <td>@trans.StockSymbol</td>
-                            <td>@trans.EntryPrice</td>
-                            <td>@trans.NumberSharesEntered</td>
-                            <td>@trans.EntryDate</td>
-                            <td>@trans.SellPrice</td>
-                            <td>@trans.NumberSharesExited</td>
-                            <td>@trans.ExitDate</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" @onclick="() => OnEdit(trans.TradeId, trans.TransactionId)">Edit</button>
-                                <button class="btn btn-danger btn-sm" @onclick="() => OnDeleteTransaction(trans.TransactionId, trans.TradeId)">Delete</button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <div class="modal fade show d-block" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog-centered modalBackdrop">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Transactions for Trade @pTradeId</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="(() => CloseEditModal())"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Trade ID</th>
+                                    <th>Stock Symbol</th>
+                                    <th>Entry Price</th>
+                                    <th># Shares Entered</th>
+                                    <th>Entry Date</th>
+                                    <th>Exit Price</th>
+                                    <th># Shares Exited</th>
+                                    <th>Exit Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var trans in transactionList)
+                                {
+                                    <tr>
+                                        <td>@trans.TransactionId</td>
+                                        <td>@trans.TradeId</td>
+                                        <td>@trans.StockSymbol</td>
+                                        <td>@trans.EntryPrice</td>
+                                        <td>@trans.NumberSharesEntered</td>
+                                        <td>@trans.EntryDate</td>
+                                        <td>@trans.SellPrice</td>
+                                        <td>@trans.NumberSharesExited</td>
+                                        <td>@trans.ExitDate</td>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm" @onclick="() => OnEdit(trans.TradeId, trans.TransactionId)">Edit</button>
+                                            <button class="btn btn-danger btn-sm" @onclick="() => OnDeleteTransaction(trans.TransactionId, trans.TradeId)">Delete</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
+    
+@*     } *@
 }
 else
 {
@@ -112,9 +133,9 @@ else
 
 @if (Show)
 {
-    <div class="modal fade show d-block" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
+    <div class="modal fade show d-block">
+        <div class="modal-dialog-centered modalBackdrop">
+            <div class="modal-content modal-dialog">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">@title Transaction</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="(() => CloseModal())"></button>
@@ -189,6 +210,8 @@ else
 
     public bool Show { get; set; } = false;
 
+    private bool ShowEditTransactionModal { get; set; } = false;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -255,10 +278,12 @@ else
         NavigationManager.NavigateTo($"/combinedform");
         transactionList = await transactionService.GetTransactionByTradeId(pTradeId);
         Show = false;
+        ShowEditTransactionModal = false;
     }
 
     private async Task OnShowTransactions(int pTradeId)
     {
+        ShowEditTransactionModal = true;
         transaction = new Transaction();
         transaction.TradeId = pTradeId;
         transactionList = await transactionService.GetTransactionByTradeId(pTradeId);
@@ -282,6 +307,7 @@ else
     private void CloseModal()
     {
         Show = false;
+        ShowEditTransactionModal = false;
     }
 
     private async void HandleNewSubmit()
@@ -305,6 +331,11 @@ else
         Show = true;
         //trade.TradeId = 0;
         transaction = new Transaction();
+    }
+
+    private void CloseEditModal()
+    {
+        ShowEditTransactionModal = false;
     }
 }
 
