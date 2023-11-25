@@ -121,7 +121,7 @@ else
                 </div>
                 <div class="modal-body">
 
-                    <EditForm Model="transaction" OnValidSubmit="HandleNewSubmit">
+                    <EditForm Model="transaction" OnValidSubmit="()=>HandleValidSubmit(transaction.TradeId, transaction.TransactionId)">
                         <DataAnnotationsValidator></DataAnnotationsValidator>
                         <ValidationSummary></ValidationSummary>
                         <div class="form-group">
@@ -164,58 +164,9 @@ else
     </div>
 }
 
-@if (NewTradeForm)
-{
-    <h3>@title Transaction for Trade @pTradeId</h3>
-    <div class="row">
-        <div class="col-sm-2">
-            <EditForm Model="transaction" OnValidSubmit="()=>HandleValidSubmit(transaction.TradeId, transaction.TransactionId)">
-                <DataAnnotationsValidator></DataAnnotationsValidator>
-                <ValidationSummary></ValidationSummary>
-                <div class="form-group">
-                    <label for="TradeId">Trade Id</label>
-                    <InputNumber class="form-control" @bind-Value="transaction.TradeId" readonly="true"></InputNumber>
-                </div>
-                <div class="form-group">
-                    <label for="StockSymbol">Stock Symbol</label>
-                    <InputText class="form-control" @bind-Value="transaction.StockSymbol"></InputText>
-                </div>
-                <div class="form-group">
-                    <label for="EntryPrice">Entry Price</label>
-                    <InputNumber class="form-control" @bind-Value="transaction.EntryPrice"></InputNumber>
-                </div>
-                <div class="form-group">
-                    <label for="NumberSharesEntered">Number Shares Entered</label>
-                    <InputNumber class="form-control" @bind-Value="transaction.NumberSharesEntered"></InputNumber>
-                </div>
-                <div class="form-group">
-                    <label for="EntryDate">Entry Date</label>
-                    <InputDate class="form-control" @bind-Value="transaction.EntryDate"></InputDate>
-                </div>
-                <div class="form-group">
-                    <label for="SellPrice">Exit Price</label>
-                    <InputNumber class="form-control" @bind-Value="transaction.SellPrice"></InputNumber>
-                </div>
-                <div class="form-group">
-                    <label for="NumberSharesExited">Number Shares Exited</label>
-                    <InputNumber class="form-control" @bind-Value="transaction.NumberSharesExited"></InputNumber>
-                </div>
-                <div class="form-group">
-                    <label for="ExitDate">Exit Date</label>
-                    <InputDate class="form-control" @bind-Value="transaction.ExitDate"></InputDate>
-                </div><br />
-                <button type="submit" class="btn-primary btn-sm">Update</button>
-            </EditForm>
-        </div>
-    </div>
-}
-
-
 
 @code {
     public bool isLoading { get; set; } = true;
-
-    private bool NewTradeForm { get; set; } = false;
 
     private List<Trade> tradeList = new List<Trade>();
 
@@ -303,6 +254,7 @@ else
         dbContext.SaveChanges();    //once SaveChanges, then transactionId incremented by 1. 0 before this point.
         NavigationManager.NavigateTo($"/combinedform");
         transactionList = await transactionService.GetTransactionByTradeId(pTradeId);
+        Show = false;
     }
 
     private async Task OnShowTransactions(int pTradeId)
