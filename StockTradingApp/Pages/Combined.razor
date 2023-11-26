@@ -10,8 +10,15 @@
 @inject ApplicationDbContext dbContext
 
 <style>
+    .background {
+        background-color: cornflowerblue;
+    }
     .table-responsive {
-        max-height: 500px;
+        max-height: 700px;
+        border-radius: 10px;
+        border: 1px solid gray; /* Use border shorthand to set color and width */
+        padding: 10px;
+        background-color: #EAECF1;
     }
 
     .modalBackdrop {
@@ -19,6 +26,7 @@
         background-color: rgba(0,0,0,0.5);
     }
 </style>
+
 @if (transactionList.Any())
 {
 @*     @if (pTradeId == null)
@@ -45,7 +53,7 @@
                     {
                         <tr>
                             <td>@trans.Key</td>
-                            <td>@trans.First().StockSymbol</td>
+                            <td class="fw-bold">@trans.First().StockSymbol</td>
                             <td>@trans.Count()</td>
                             <td>@trans.Average(trans => trans.EntryPrice)</td>
                             <td>@trans.Sum(trans => trans.NumberSharesEntered)</td>
@@ -55,10 +63,10 @@
                             <td>@trans.Sum(trans => trans.NumberSharesExited)</td>
                             <td>@trans.Last().ExitDate</td>
                             <td>
-                                <button class="btn btn-success btn-sm" @onclick="() => OnAddTransaction(trans.Key)">Add</button>
-                                <button class="btn btn-primary btn-sm" @onclick="() => OnShowTransactions(trans.Key)">Modify</button>
-                                <button class="btn btn-danger btn-sm" @onclick="() => OnDeleteTrade(trans.Key)">Delete</button>
-                            </td>
+                            <button class="btn btn-primary btn-sm" @onclick="() => OnShowTransactions(trans.Key)"><i class="fa fa-search"></i></button>
+                                <button class="btn btn-success btn-sm" @onclick="() => OnAddTransaction(trans.Key, trans.First().StockSymbol)"><i class="fa fa-plus"></i></button>
+@*                                 <button class="btn btn-danger btn-sm" @onclick="() => OnDeleteTrade(trans.Key)"><i class="fa fa-minus"></i></button>
+ *@                            </td>
                         </tr>
                     }
                 </tbody>
@@ -77,10 +85,10 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="staticBackdropLabel">Transactions for Trade @pTradeId</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="(() => CloseEditModal())"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="CloseEditModal"></button>
                     </div>
                     <div class="modal-body">
-                        <table class="table table-hover">
+                        <table class="table table-hover table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>Transaction ID</th>
@@ -109,8 +117,8 @@
                                         <td>@trans.NumberSharesExited</td>
                                         <td>@trans.ExitDate</td>
                                         <td>
-                                            <button class="btn btn-primary btn-sm" @onclick="() => OnEdit(trans.TradeId, trans.TransactionId)">Edit</button>
-                                            <button class="btn btn-danger btn-sm" @onclick="() => OnDeleteTransaction(trans.TransactionId, trans.TradeId)">Delete</button>
+                                            <button class="btn btn-primary btn-sm" @onclick="() => OnEdit(trans.TradeId, trans.TransactionId)"><i class="fa fa-pencil"></i></button>
+                                            <button class="btn btn-danger btn-sm" @onclick="() => OnDeleteTransaction(trans.TransactionId, trans.TradeId)"><i class="fa fa-minus"></i></button>
                                         </td>
                                     </tr>
                                 }
@@ -151,7 +159,7 @@ else
                         </div>
                         <div class="form-group">
                             <label for="StockSymbol">Stock Symbol</label>
-                            <InputText class="form-control" @bind-Value="transaction.StockSymbol"></InputText>
+                            <InputText class="form-control" @bind-Value="transaction.StockSymbol" readonly="true"></InputText>
                         </div>
                         <div class="form-group">
                             <label for="EntryPrice">Entry Price</label>
@@ -184,6 +192,7 @@ else
         </div>
     </div>
 }
+
 
 
 @code {
@@ -246,11 +255,13 @@ else
         NavigationManager.NavigateTo($"/combinedform/{pTradeId}");
     }
 
-    private async void OnDeleteTrade(int tradeId)
-    {
-        tradeService.DeleteTrade(tradeId);
-        tradeList = await tradeService.GetAllTrades();
-    }
+    // private async void OnDeleteTrade(int tradeId)
+    // {
+    //     tradeService.DeleteTrade(tradeId);
+    //     tradeList = await tradeService.GetAllTrades();
+    //     StateHasChanged();
+    //     await LoadTransactions();
+    // }
 
     private void OnEdit(int pTradeId, int pTransactionId)
     {
@@ -263,7 +274,7 @@ else
         }
     }
 
-    private async void HandleValidSubmit(int pTradeId, int pTransactionId)
+    private async Task HandleValidSubmit(int pTradeId, int pTransactionId)
     {
         if (pTransactionId == 0 || pTransactionId == null)
         {
@@ -277,6 +288,8 @@ else
         dbContext.SaveChanges();    //once SaveChanges, then transactionId incremented by 1. 0 before this point.
         NavigationManager.NavigateTo($"/combinedform");
         transactionList = await transactionService.GetTransactionByTradeId(pTradeId);
+        StateHasChanged();
+        await LoadTransactions();
         Show = false;
         ShowEditTransactionModal = false;
     }
@@ -287,7 +300,10 @@ else
         transaction = new Transaction();
         transaction.TradeId = pTradeId;
         transactionList = await transactionService.GetTransactionByTradeId(pTradeId);
-        NavigationManager.NavigateTo($"/combinedform/{pTradeId}");
+        // NavigationManager.NavigateTo($"/combinedform/{pTradeId}");
+        StateHasChanged();
+        // await LoadTransactions();
+
     }
 
 
@@ -296,18 +312,21 @@ else
         trade = new Trade();
     }
 
-    private void OnAddTransaction(int pTradeId)
+    private void OnAddTransaction(int pTradeId, string pStockSymbol)
     {
         title = "Add New";
         Show = true;
         trade.TradeId = pTradeId;
+        trade.StockSymbol = pStockSymbol;
         transaction = new Transaction { TradeId = trade.TradeId, StockSymbol = trade.StockSymbol };
     }
 
-    private void CloseModal()
+    private async Task CloseModal()
     {
         Show = false;
         ShowEditTransactionModal = false;
+        StateHasChanged();
+        await LoadTransactions();
     }
 
     private async void HandleNewSubmit()
@@ -333,9 +352,11 @@ else
         transaction = new Transaction();
     }
 
-    private void CloseEditModal()
+    private async Task CloseEditModal()
     {
         ShowEditTransactionModal = false;
+        StateHasChanged();
+        await LoadTransactions();
     }
 }
 
