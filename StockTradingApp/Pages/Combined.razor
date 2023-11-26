@@ -8,6 +8,7 @@
 @inject ITransactionService transactionService
 @inject NavigationManager NavigationManager
 @inject ApplicationDbContext dbContext
+@inject IJSRuntime JSRuntime
 
 <style>
     .background {
@@ -16,7 +17,7 @@
     .table-responsive {
         max-height: 700px;
         border-radius: 10px;
-        border: 1px solid gray; /* Use border shorthand to set color and width */
+        border: 1px solid gray; /
         padding: 10px;
         background-color: #EAECF1;
     }
@@ -27,10 +28,11 @@
     }
 </style>
 
+<a href="/trades" class="btn btn-secondary" style="float:right">Go Back</a>
+<br /><br />
 @if (transactionList.Any())
 {
-@*     @if (pTradeId == null)
-    { *@
+
         <div class="table-responsive">
             <table class="table table-striped table-hover table-responsive">
                 <thead>
@@ -73,11 +75,7 @@
             </table>
         </div>
         <br />
-@*     }
 
-    else
-    { *@
-@*         <h3>Transactions for Trade @pTradeId</h3> *@
     @if(ShowEditTransactionModal)
     {
         <div class="modal fade show d-block" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -135,7 +133,7 @@
 else
 {
     <div class="text-center">
-        <img src="/images/smallLoading.gif">
+        <img src="/images/infinityLoading.gif">
     </div>
 }
 
@@ -292,6 +290,8 @@ else
         await LoadTransactions();
         Show = false;
         ShowEditTransactionModal = false;
+        await JSRuntime.InvokeVoidAsync("ShowToastr", "success1", "Success");
+
     }
 
     private async Task OnShowTransactions(int pTradeId)

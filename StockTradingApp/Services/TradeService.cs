@@ -33,7 +33,7 @@ namespace StockTradingApp
         {
             var trade = GetTradeById(TradeId);
             _dbContext.Trades.Remove(trade);
-            //_dbContext.SaveChanges();
+            _dbContext.SaveChanges();
         }
 
         public void UpdateTrade(Trade updatedTrade)

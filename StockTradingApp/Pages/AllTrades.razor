@@ -7,6 +7,7 @@
 @inject NavigationManager NavigationManager
 @inject ApplicationDbContext dbContext
 @inject IModalService Modal
+@inject IJSRuntime JSRuntime
 
 
 <style>
@@ -30,16 +31,16 @@
     @if(ShowNewTrade)
     {
         <div class="m-lg-2">
-            <span style="color: white;">Enter Stock Symbol:</span><br/>
-            <input type="text" @bind-value="trade.StockSymbol">
+            <span style="color: white; font-size: 16pt;">Enter Stock Symbol:</span><br/>
+            <input type="text" style="width: 15%; height: 40px;" @bind-value="trade.StockSymbol">
             <button class="btn btn-success btn-md" @onclick="AddNewTrade">Add</button>
             <button class="btn btn-danger btn-md" @onclick="CloseAdd">Cancel</button>
         </div>
     }
     else
     {
-        <button class="btn btn-success" @onclick="OnAdd">Initiate New Trade</button>
-        <button class="btn btn-primary" @onclick="OnEdit">View Transactions</button>
+        <button class="btn btn-lg btn-success" @onclick="OnAdd"><i class="fa fa-pencil"></i> Initiate New Trade</button>
+        <button class="btn btn-lg btn-primary" @onclick="OnEdit"><i class="fa fa-search"></i> View Transactions</button>
     }
     <br>
     <br>
@@ -60,7 +61,7 @@
                         <td class="fw-bold">@trade.StockSymbol</td>
                         <td>
                             <button class="btn btn-success btn-sm" @onclick="() => OnAddTransaction(trade.TradeId, trade.StockSymbol)"><i class="fa fa-plus"></i></button>
-                            <button class="btn btn-danger btn-sm" @onclick="() => OnDelete(trade.TradeId)"><i class="fa fa-minus"></i></button>
+                            <button class="btn btn-danger btn-sm" @onclick="()=>DeleteAlert(trade.TradeId)"><i class="fa fa-minus"></i></button>
                         </td>
                     </tr>
                 }
@@ -71,7 +72,7 @@
 else
 {
     <div class="text-center">
-        <img src="/images/smallLoading.gif">
+        <img src="/images/infinityLoading.gif">
     </div>
 }
 
@@ -135,14 +136,14 @@ else
             <div class="modal-content modal-dialog">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">Are you sure?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="(() => CloseDeleteModal())"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="CloseDeleteModal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>This will permanently delete all transactions for the selected trade.</p>
+                    <p>This will permanently delete all transactions for <b>Trade @trade.TradeId</b></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Yes, I'm sure</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Go Back</button>
+                    <button type="button" class="btn btn-danger" @onclick="()=>OnDelete(Convert.ToInt32(trade.TradeId))">Yes, I'm sure</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseDeleteModal">Go Back</button>
                 </div>
             </div>
         </div>
@@ -208,6 +209,8 @@ else
         await LoadTrades();
         ShowNewTrade = false;
         trade = new Trade();
+        await JSRuntime.InvokeVoidAsync("ShowToastr", "success", "Success");
+
     }
 
     private void OnAddTransaction(int pTradeId, string StockSymbol)
@@ -225,17 +228,12 @@ else
 
         tradeService.DeleteTrade(TradeId);
         tradeList = await tradeService.GetAllTrades();
-        ShowDeleteModal = true;
+        ShowDeleteModal = false;
     }
 
     private void OnEdit()
     {
-        // title = "Edit";
-        // Show = true;
-        // trade.TradeId = pTradeId;
-        // //trade = tradeService.GetTradeById(pTradeId);
         NavigationManager.NavigateTo("/combined");
-
     }
 
     private async void HandleValidTradeSubmit() //TODO: show updated table when clicking update
@@ -267,6 +265,8 @@ else
         NavigationManager.NavigateTo("/combined");
         dbContext.SaveChanges();
         transactionList = await transactionService.GetAllTransactions();
+        await JSRuntime.InvokeVoidAsync("ShowToastr", "success1", "Success");
+
     }
 
     private void CloseModal()
@@ -282,5 +282,17 @@ else
     private void CloseDeleteModal()
     {
         ShowDeleteModal = false;
+    }
+
+    private void DeleteAlert(int pTradeId)
+    {
+        trade.TradeId = pTradeId;
+        ShowDeleteModal = true;
+    }
+
+
+    private async Task ToastrSuccess()
+    {
+        await JSRuntime.InvokeVoidAsync("ShowToastr", "success", "Success"); 
     }
 }
