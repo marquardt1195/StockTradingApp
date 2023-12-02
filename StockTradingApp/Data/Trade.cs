@@ -8,7 +8,7 @@ namespace StockTradingApp.Data
         public int TradeId { get; set; }
 
         [Required]
-        public string StockSymbol { get; set; }
+        public string StockSymbol { get; set; } = string.Empty;
 
         public double? BuyPrice { get; set; }
 
@@ -24,6 +24,6 @@ namespace StockTradingApp.Data
 
         public DateTime? ShareSellDate { get; set; }
 
-        public ICollection<Transaction> Transactions { get; set; }
+        public ICollection<Transaction>? Transactions { get; set; }
     }
 }

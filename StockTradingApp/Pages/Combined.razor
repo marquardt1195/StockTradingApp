@@ -14,10 +14,11 @@
     .background {
         background-color: cornflowerblue;
     }
+
     .table-responsive {
         max-height: 700px;
         border-radius: 10px;
-        border: 1px solid gray; /
+        border: 1px solid gray;
         padding: 10px;
         background-color: #EAECF1;
     }
@@ -26,59 +27,62 @@
         height: 100vh;
         background-color: rgba(0,0,0,0.5);
     }
+
+    .trans-title {
+        color: white;
+    }
 </style>
 
-<a href="/trades" class="btn btn-secondary" style="float:right">Go Back</a>
-<br /><br />
+<h2 class="trans-title">Transactions</h2>
+<br />
 @if (transactionList.Any())
 {
 
-        <div class="table-responsive">
-            <table class="table table-striped table-hover table-responsive">
-                <thead>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-responsive">
+            <thead>
+                <tr>
+                    <th>Trade ID</th>
+                    <th>Stock Symbol</th>
+                    <th># Transactions</th>
+                    <th>Buy Price</th>
+                    <th># Shares Bought</th>
+                    <th>Share Buy Date</th>
+                    <th>Sell Price</th>
+                    <th># Shares Sold</th>
+                    <th>Share Sell Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var trans in transactionList.GroupBy(trans => trans.TradeId))
+                {
                     <tr>
-                        <th>Trade ID</th>
-                        <th>Stock Symbol</th>
-                        <th># Transactions</th>
-                        <th>Buy Price</th>
-                        <th># Shares Bought</th>
-                        <th>Share Buy Date</th>
-                        <th>Dollar Stop Loss</th>
-                        <th>Sell Price</th>
-                        <th># Shares Sold</th>
-                        <th>Share Sell Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var trans in transactionList.GroupBy(trans => trans.TradeId))
-                    {
-                        <tr>
-                            <td>@trans.Key</td>
-                            <td class="fw-bold">@trans.First().StockSymbol</td>
-                            <td>@trans.Count()</td>
-                            <td>@trans.Average(trans => trans.EntryPrice)</td>
-                            <td>@trans.Sum(trans => trans.NumberSharesEntered)</td>
-                            <td>@trans.First().EntryDate</td>
-                            <td>@trans.First().EntryPrice</td>  @* stop loss *@
-                            <td>@trans.Average(trans => trans.SellPrice)</td>
-                            <td>@trans.Sum(trans => trans.NumberSharesExited)</td>
-                            <td>@trans.Last().ExitDate</td>
-                            <td>
+                        <td>@trans.Key</td>
+                        <td class="fw-bold">@trans.First().StockSymbol</td>
+                        <td>@trans.Count()</td>
+                        <td>@trans.Average(trans => trans.EntryPrice)</td>
+                        <td>@trans.Sum(trans => trans.NumberSharesEntered)</td>
+                        <td>@trans.First().EntryDate</td>
+                        <td>@trans.Average(trans => trans.SellPrice)</td>
+                        <td>@trans.Sum(trans => trans.NumberSharesExited)</td>
+                        <td>@trans.Last().ExitDate</td>
+                        <td>
                             <button class="btn btn-primary btn-sm" @onclick="() => OnShowTransactions(trans.Key)"><i class="fa fa-search"></i></button>
-                                <button class="btn btn-success btn-sm" @onclick="() => OnAddTransaction(trans.Key, trans.First().StockSymbol)"><i class="fa fa-plus"></i></button>
-@*                                 <button class="btn btn-danger btn-sm" @onclick="() => OnDeleteTrade(trans.Key)"><i class="fa fa-minus"></i></button>
- *@                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-        <br />
+                            <button class="btn btn-success btn-sm" @onclick="() => OnAddTransaction(trans.Key, trans.First().StockSymbol)"><i class="fa fa-plus"></i></button>
+                             @* <button class="btn btn-danger btn-sm" @onclick="() => OnDeleteTrade(trans.Key)"><i class="fa fa-minus"></i></button> *@
+                    
+                        </td>
+                    </tr>
+                } 
+            </tbody>
+        </table>
+    </div>
+    <br />
 
-    @if(ShowEditTransactionModal)
+    @if (ShowEditTransactionModal)
     {
-        <div class="modal fade show d-block" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal fade show d-block" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog-centered modalBackdrop">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -116,7 +120,7 @@
                                         <td>@trans.ExitDate</td>
                                         <td>
                                             <button class="btn btn-primary btn-sm" @onclick="() => OnEdit(trans.TradeId, trans.TransactionId)"><i class="fa fa-pencil"></i></button>
-                                            <button class="btn btn-danger btn-sm" @onclick="() => OnDeleteTransaction(trans.TransactionId, trans.TradeId)"><i class="fa fa-minus"></i></button>
+                                            <button class="btn btn-danger btn-sm" @onclick="() => OnClickDeleteTransaction(trans.TransactionId, trans.TradeId)"><i class="fa fa-minus"></i></button>
                                         </td>
                                     </tr>
                                 }
@@ -127,8 +131,8 @@
             </div>
         </div>
     }
-    
-@*     } *@
+
+    @*     } *@
 }
 else
 {
@@ -191,6 +195,27 @@ else
     </div>
 }
 
+@if (ShowDeleteModal)
+{
+    <div class="modal fade show d-block">
+        <div class="modal-dialog-centered modalBackdrop">
+            <div class="modal-content modal-dialog">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="CloseDeleteModal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>This will permanently delete this transaction for <b>Trade @transaction.TradeId</b></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" @onclick="()=>OnDeleteTransaction(transaction.TransactionId, transaction.TradeId)">Yes, I'm sure</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseDeleteModal">Go Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 
 
 @code {
@@ -218,6 +243,8 @@ else
     public bool Show { get; set; } = false;
 
     private bool ShowEditTransactionModal { get; set; } = false;
+
+    private bool ShowDeleteModal { get; set; } = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -251,6 +278,7 @@ else
         transactionService.DeleteTransaction(transactionId);
         transactionList = await transactionService.GetTransactionByTradeId(pTradeId);
         NavigationManager.NavigateTo($"/combinedform/{pTradeId}");
+        ShowDeleteModal = false;
     }
 
     // private async void OnDeleteTrade(int tradeId)
@@ -357,6 +385,18 @@ else
         ShowEditTransactionModal = false;
         StateHasChanged();
         await LoadTransactions();
+    }
+
+    private void CloseDeleteModal()
+    {
+        ShowDeleteModal = false;
+    }
+
+    private void OnClickDeleteTransaction(int transactionId, int pTradeId)
+    {
+        ShowDeleteModal = true;
+        transaction.TransactionId = transactionId;
+        transaction.TradeId = pTradeId;
     }
 }
 

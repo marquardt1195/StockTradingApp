@@ -15,5 +15,9 @@ namespace StockTradingApp.Services
         void DeleteTrade(int StockId);
 
         int GetNextTradeId(int pTradeId);
+
+        List<Trade> GetTradeBySymbol(string pStockSymbol);
+
+        public Task<List<Trade>> GetAllExistingTrades();
     }
 }

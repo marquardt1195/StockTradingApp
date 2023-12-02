@@ -1,0 +1,49 @@
+﻿<style>
+    .searchBox {
+        width: 75%;
+    }
+
+    .bodyFont {
+        color: white;
+    }
+</style>
+
+<br/>
+<div class="input-group searchBox">
+    <input type="text" 
+        class="form-control"
+        placeholder="Enter stock symbol"
+        @bind-value="TradeToSearch"
+        @bind-value:event="oninput"/>
+    <button
+        type="button"
+        class="btn-primary input-group-text"
+        @onclick="OnSearch">Search
+    </button>
+    @if (!string.IsNullOrEmpty(TradeToSearch))
+    {
+        <button
+        type="button"
+        class="btn-danger input-group-text"
+        @onclick="OnClearSearch">Clear
+        </button>
+    }
+</div>
+
+@code {
+    private string TradeToSearch = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> OnSearchTrade { get; set; }
+
+    private void OnSearch()
+    {
+        OnSearchTrade.InvokeAsync(TradeToSearch);
+    }
+
+    private void OnClearSearch()
+    {
+        TradeToSearch = "";
+        OnSearch();
+    }
+}

@@ -16,7 +16,14 @@ namespace StockTradingApp
 
         public async Task<List<Trade>> GetAllTrades()
         {
-            return _dbContext.Trades.OrderByDescending(trade => trade.TradeId).ToList();
+            //var calculateCostBasis = "EXEC sp_getWeightAvg";
+            //return _dbContext.Trades.FromSqlRaw(calculateCostBasis).ToList();
+            return _dbContext.Trades.OrderByDescending(transactions => transactions.TradeId).ToList();
+        }
+
+        public async Task<List<Trade>> GetAllExistingTrades()
+        {
+            return _dbContext.Trades.OrderByDescending(transactions => transactions.TradeId).ToList();
         }
 
         public void AddTrade(Trade trade)
@@ -27,6 +34,11 @@ namespace StockTradingApp
         public Trade GetTradeById(int TradeId) 
         {
             return _dbContext.Trades.SingleOrDefault(x => x.TradeId == TradeId);
+        }
+
+        public List<Trade> GetTradeBySymbol(string pStockSymbol)
+        {
+            return _dbContext.Trades.Where(x => x.StockSymbol.Contains(pStockSymbol)).ToList();
         }
 
         public void DeleteTrade(int TradeId)

@@ -2,6 +2,7 @@
 @page "/tradeform/{pTradeId:int?}"
 @using Services;
 @using Data;
+@using StockTradingApp.Components;
 @inject ITradeService tradeService
 @inject ITransactionService transactionService
 @inject NavigationManager NavigationManager
@@ -21,35 +22,56 @@
         border-radius: 10px;
         border: 1px solid #2B3449; /* Use border shorthand to set color and width */
         padding: 10px;
-        width: 60%;
+        width: 75%;
         background-color: #EAECF1;
+    }
+
+    .btnFloat {
+        width: 20%;
+    }
+    
+    .custom-nav {
+        width: 75%;
+    }
+
+    .nav-font {
+
     }
 </style>
 
+@if (ShowNewTrade)
+{
+    <div class="m-lg-2 ">
+        <span style="color: white; font-size: 16pt;">Enter Stock Symbol:</span><br />
+        <input type="text" style="width: 15%; height: 40px;" @bind-value="trade.StockSymbol">
+        <button class="btn btn-success btn-md" @onclick="AddNewTrade">Add</button>
+        <button class="btn btn-danger btn-md" @onclick="CloseAdd">Cancel</button>
+    </div>
+}
+else
+{
+    <button class="btn btn-lg btn-success btnFloat" @onclick="OnAdd"><i class="fa fa-pencil"></i> New Trade</button>
+    @*         <button class="btn btn-lg btn-primary btnFloat" @onclick="OnEdit"><i class="fa fa-search"></i> View Transactions</button> *@
+}
+<br/>
+<SearchTradeComponent OnSearchTrade="OnTradeSearch"></SearchTradeComponent>
+
 @if (tradeList.Any())
 {
-    @if(ShowNewTrade)
-    {
-        <div class="m-lg-2">
-            <span style="color: white; font-size: 16pt;">Enter Stock Symbol:</span><br/>
-            <input type="text" style="width: 15%; height: 40px;" @bind-value="trade.StockSymbol">
-            <button class="btn btn-success btn-md" @onclick="AddNewTrade">Add</button>
-            <button class="btn btn-danger btn-md" @onclick="CloseAdd">Cancel</button>
-        </div>
-    }
-    else
-    {
-        <button class="btn btn-lg btn-success" @onclick="OnAdd"><i class="fa fa-pencil"></i> Initiate New Trade</button>
-        <button class="btn btn-lg btn-primary" @onclick="OnEdit"><i class="fa fa-search"></i> View Transactions</button>
-    }
-    <br>
-    <br>
+    <br/>
     <div class=" table-responsive ">
         <table class="table table-striped table-hover tableRound">
             <thead>
                 <tr>
                     <th>Trade ID</th>
                     <th>Stock Symbol</th>
+                    <th>Cost Basis</th>
+                    <th>Total Num Bought</th>
+                    <th>Buy Date</th>
+                    <th>Dollar Stop</th>
+                    <th>Sell Price</th>
+                    <th>Total Sold</th>
+                    <th>Sell Date</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -59,6 +81,13 @@
                     <tr>
                         <td>@trade.TradeId</td>
                         <td class="fw-bold">@trade.StockSymbol</td>
+                        <td>@trade.BuyPrice</td>
+                        <td>@trade.NumberSharesBought</td>
+                        <td>@trade.ShareBuyDate</td>
+                        <td>@trade.DollarStopLoss</td>
+                        <td>@trade.SellPrice</td>
+                        <td>@trade.NumberSharesSold</td>
+                        <td>@trade.ShareSellDate</td>
                         <td>
                             <button class="btn btn-success btn-sm" @onclick="() => OnAddTransaction(trade.TradeId, trade.StockSymbol)"><i class="fa fa-plus"></i></button>
                             <button class="btn btn-danger btn-sm" @onclick="()=>DeleteAlert(trade.TradeId)"><i class="fa fa-minus"></i></button>
@@ -174,17 +203,39 @@ else
 
     public string title = "";
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private string stockSymbol = string.Empty;
+
+    private string searchTerm = string.Empty;
+
+    private void OnTradeSearch(string searchTerm)
     {
-        if (firstRender)
-        {
-            LoadTrades();
-        }
+        this.searchTerm = searchTerm;
     }
 
-    private async Task LoadTrades()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        tradeList = await tradeService.GetAllTrades();
+        await LoadTrades(searchTerm);
+    }
+
+    private async Task LoadTrades(string searchTerm)
+    {
+        this.searchTerm = searchTerm;
+        if(string.IsNullOrEmpty(searchTerm))
+        {
+            tradeList = await tradeService.GetAllTrades();
+        }
+        else
+        {
+            tradeList = tradeService.GetTradeBySymbol(searchTerm);
+        }
+        isLoading = false;
+        StateHasChanged();
+    }
+
+    private async Task LoadExistingTrades(string searchTerm)
+    {
+        this.searchTerm = searchTerm;
+        tradeList = await tradeService.GetAllExistingTrades();
         isLoading = false;
         StateHasChanged();
     }
@@ -206,7 +257,7 @@ else
         tradeService.AddTrade(trade);
         dbContext.SaveChanges();
         StateHasChanged();
-        await LoadTrades();
+        await LoadExistingTrades(searchTerm);
         ShowNewTrade = false;
         trade = new Trade();
         await JSRuntime.InvokeVoidAsync("ShowToastr", "success", "Success");
@@ -295,4 +346,6 @@ else
     {
         await JSRuntime.InvokeVoidAsync("ShowToastr", "success", "Success"); 
     }
+
 }
+
