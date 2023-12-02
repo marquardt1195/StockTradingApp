@@ -45,7 +45,7 @@
                     <th>Trade ID</th>
                     <th>Stock Symbol</th>
                     <th># Transactions</th>
-                    <th>Buy Price</th>
+                    <th>Entry Price</th>
                     <th># Shares Bought</th>
                     <th>Share Buy Date</th>
                     <th>Sell Price</th>
@@ -61,17 +61,16 @@
                         <td>@trans.Key</td>
                         <td class="fw-bold">@trans.First().StockSymbol</td>
                         <td>@trans.Count()</td>
-                        <td>@trans.Average(trans => trans.EntryPrice)</td>
+                        <td>@(trans.First().EntryPrice.HasValue ? trade.DollarStopLoss.Value.ToString("C") : string.Empty)</td>
                         <td>@trans.Sum(trans => trans.NumberSharesEntered)</td>
-                        <td>@trans.First().EntryDate</td>
-                        <td>@trans.Average(trans => trans.SellPrice)</td>
+                        <td>@(trans.First().EntryDate.HasValue ? trans.First().EntryDate.Value.ToString("MM/dd/yy") : string.Empty)</td>
+                        <td>@(trans.Last().SellPrice.HasValue ? trans.Last().SellPrice.Value.ToString("C") : string.Empty)</td>
                         <td>@trans.Sum(trans => trans.NumberSharesExited)</td>
-                        <td>@trans.Last().ExitDate</td>
+                        <td>@(trans.First().ExitDate.HasValue ? trans.First().ExitDate.Value.ToString("MM/dd/yy") : string.Empty)</td>
                         <td>
                             <button class="btn btn-primary btn-sm" @onclick="() => OnShowTransactions(trans.Key)"><i class="fa fa-search"></i></button>
                             <button class="btn btn-success btn-sm" @onclick="() => OnAddTransaction(trans.Key, trans.First().StockSymbol)"><i class="fa fa-plus"></i></button>
-                             @* <button class="btn btn-danger btn-sm" @onclick="() => OnDeleteTrade(trans.Key)"><i class="fa fa-minus"></i></button> *@
-                    
+                             @* <button class="btn btn-danger btn-sm" @onclick="() => OnDeleteTrade(trans.Key)"><i class="fa fa-minus"></i></button> *@                
                         </td>
                     </tr>
                 } 
@@ -124,7 +123,8 @@
                                         </td>
                                     </tr>
                                 }
-                            </tbody>
+@*                                  <button class="btn btn-success btn-md" @onclick="()=>OnAddTransaction(transaction.TradeId, transaction.StockSymbol)"><i class="fa fa-pencil"></i> Add Transaction</button>
+ *@                            </tbody>
                         </table>
                     </div>
                 </div>

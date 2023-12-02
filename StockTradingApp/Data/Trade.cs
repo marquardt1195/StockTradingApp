@@ -16,7 +16,7 @@ namespace StockTradingApp.Data
 
         public DateTime? ShareBuyDate { get; set; }
 
-        public double? DollarStopLoss { get; set; }
+        public double? DollarStopLoss { get; set; } = 0;
 
         public double? SellPrice { get; set; }
 

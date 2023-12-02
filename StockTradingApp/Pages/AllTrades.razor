@@ -81,13 +81,13 @@ else
                     <tr>
                         <td>@trade.TradeId</td>
                         <td class="fw-bold">@trade.StockSymbol</td>
-                        <td>@trade.BuyPrice</td>
+                        <td>@(trade.BuyPrice.HasValue ? trade.BuyPrice.Value.ToString("C") : string.Empty)</td>
                         <td>@trade.NumberSharesBought</td>
-                        <td>@trade.ShareBuyDate</td>
-                        <td>@trade.DollarStopLoss</td>
-                        <td>@trade.SellPrice</td>
+                        <td>@(trade.ShareBuyDate.HasValue ? trade.ShareBuyDate.Value.ToString("MM/dd/yy") : string.Empty)</td>
+                        <td>@(trade.DollarStopLoss.HasValue ? trade.DollarStopLoss.Value.ToString("C") : string.Empty)</td>
+                        <td>@(trade.SellPrice.HasValue ? trade.SellPrice.Value.ToString("C") : string.Empty)</td>
                         <td>@trade.NumberSharesSold</td>
-                        <td>@trade.ShareSellDate</td>
+                        <td>@(trade.ShareSellDate.HasValue ? trade.ShareSellDate.Value.ToString("MM/dd/yy") : string.Empty)</td>
                         <td>
                             <button class="btn btn-success btn-sm" @onclick="() => OnAddTransaction(trade.TradeId, trade.StockSymbol)"><i class="fa fa-plus"></i></button>
                             <button class="btn btn-danger btn-sm" @onclick="()=>DeleteAlert(trade.TradeId)"><i class="fa fa-minus"></i></button>
@@ -214,20 +214,17 @@ else
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await LoadTrades(searchTerm);
+        if (firstRender)
+        {
+            await LoadTrades(searchTerm);
+        }
+        await LoadExistingTrades(searchTerm);
     }
 
     private async Task LoadTrades(string searchTerm)
     {
         this.searchTerm = searchTerm;
-        if(string.IsNullOrEmpty(searchTerm))
-        {
-            tradeList = await tradeService.GetAllTrades();
-        }
-        else
-        {
-            tradeList = tradeService.GetTradeBySymbol(searchTerm);
-        }
+        tradeList = await tradeService.GetAllTrades();
         isLoading = false;
         StateHasChanged();
     }
@@ -235,7 +232,14 @@ else
     private async Task LoadExistingTrades(string searchTerm)
     {
         this.searchTerm = searchTerm;
-        tradeList = await tradeService.GetAllExistingTrades();
+        if(string.IsNullOrEmpty(searchTerm))
+        {
+            tradeList = await tradeService.GetAllExistingTrades();
+        }
+        else
+        {
+            tradeList = tradeService.GetTradeBySymbol(searchTerm);
+        }
         isLoading = false;
         StateHasChanged();
     }
@@ -264,7 +268,7 @@ else
 
     }
 
-    private void OnAddTransaction(int pTradeId, string StockSymbol)
+    private async Task OnAddTransaction(int pTradeId, string StockSymbol)
     {
         title = "Add";
         Show = true;
@@ -313,11 +317,10 @@ else
         {
             transactionService.UpdateTransaction(transaction);
         }
-        NavigationManager.NavigateTo("/combined");
+        Show = false;
         dbContext.SaveChanges();
         transactionList = await transactionService.GetAllTransactions();
         await JSRuntime.InvokeVoidAsync("ShowToastr", "success1", "Success");
-
     }
 
     private void CloseModal()
