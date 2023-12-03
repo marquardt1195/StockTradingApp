@@ -1,0 +1,106 @@
+﻿@using Data;
+@using Services;
+@inject ITransactionService transactionService
+
+
+<div class="modal fade show d-block" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog-centered modalBackdrop">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Transactions for Trade @pTradeId</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="CloseEditModal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Trade ID</th>
+                            <th>Stock Symbol</th>
+                            <th>Entry Price</th>
+                            <th># Shares Entered</th>
+                            <th>Entry Date</th>
+                            <th>Exit Price</th>
+                            <th># Shares Exited</th>
+                            <th>Exit Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var trans in transactionList)
+                        {
+                            <tr>
+                                <td>@trans.TransactionId</td>
+                                <td>@trans.TradeId</td>
+                                <td>@trans.StockSymbol</td>
+                                <td>@trans.EntryPrice</td>
+                                <td>@trans.NumberSharesEntered</td>
+                                <td>@trans.EntryDate</td>
+                                <td>@trans.SellPrice</td>
+                                <td>@trans.NumberSharesExited</td>
+                                <td>@trans.ExitDate</td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm" @onclick="() => OnEdit(trans.TradeId, trans.TransactionId)"><i class="fa fa-pencil"></i></button>
+                                    <button class="btn btn-danger btn-sm" @onclick="() => OnClickDeleteTransaction(trans.TransactionId, trans.TradeId)"><i class="fa fa-minus"></i></button>
+                                </td>
+                            </tr>
+                        }
+                        @* <button class="btn btn-success btn-md" @onclick="()=>OnAddTransaction(transaction.TradeId, transaction.StockSymbol)"><i class="fa fa-pencil"></i> Add Transaction</button>
+                        *@
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+   public Transaction transaction { get; set; } = new Transaction();
+
+    private List<Transaction> transactionList = new List<Transaction>();
+
+    private bool ShowEditTransactionModal { get; set; } = false;
+
+    public bool isLoading { get; set; } = true;
+
+    [Parameter]
+    public int? pTradeId { get; set; }
+
+    public string title = "Add";
+
+    public bool Show { get; set; } = false;
+
+    private bool ShowDeleteModal { get; set; } = false;
+
+    private async Task LoadTransactions()
+    {
+        transactionList = await transactionService.GetAllTransactions();
+        isLoading = false;
+        StateHasChanged();
+    }
+
+    private void OnEdit(int pTradeId, int pTransactionId)
+    {
+        if (pTransactionId > 0)
+        {
+            Show = true;
+            title = "Edit";
+            transaction = transactionService.GetTransactionById(pTransactionId);
+            //NavigationManager.NavigateTo($"/combinedform/{pTradeId}/{pTransactionId}");
+        }
+    }
+
+    private void OnClickDeleteTransaction(int transactionId, int pTradeId)
+    {
+        ShowDeleteModal = true;
+        transaction.TransactionId = transactionId;
+        transaction.TradeId = pTradeId;
+    }
+
+    private async Task CloseEditModal()
+    {
+        ShowEditTransactionModal = false;
+        StateHasChanged();
+        await LoadTransactions();
+    }
+}

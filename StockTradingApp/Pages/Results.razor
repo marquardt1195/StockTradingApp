@@ -1,7 +1,44 @@
 ﻿@page "/results"
+@using Data;
+@using Services;
+@inject IKeyMetricsService keyMetricsService
 
 <h3>Results</h3>
 
-@code {
+<table>
+    <thead>
+        <tr>
+            <th>Avg % Gain</th>
+            <th>Avg % Loss</th>
+            <th>Batting Avg</th>
+            <th>Win/Loss</th>
+            <th>Adj Win/Loss</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            @foreach (var metric in keyMetrics)
+            {
+                <td>@metric.Avg_percent_gain</td>
+                <td>@metric.Avg_percent_loss</td>
+                <td>@metric.Batting_avg</td>
+                <td>@metric.Win_loss_ratio</td>
+                <td>@metric.Adj_win_loss</td>
+            }
+        </tr>
+    </tbody>
+</table>
 
+@code {
+    public List<KeyMetrics> keyMetrics = new List<KeyMetrics>();
+
+    protected override void OnInitialized()
+    {
+         LoadMetrics();
+    }
+
+    public List<KeyMetrics> LoadMetrics()
+    {
+        keyMetrics = keyMetricsService.GetKeyMetrics();
+    }
 }

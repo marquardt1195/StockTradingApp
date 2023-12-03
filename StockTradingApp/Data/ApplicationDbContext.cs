@@ -18,6 +18,8 @@ namespace StockTradingApp.Data
 
         public DbSet<Transaction> Transactions { get; set; }
 
+        public DbSet<KeyMetrics> KeyMetrics { get; set; }
+
         //public DbSet<TradeViewModel> TradeViewModel { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -28,6 +30,10 @@ namespace StockTradingApp.Data
                 .HasMany(t => t.Transactions)
                 .WithOne(t => t.Trade)
                 .HasForeignKey(t => t.TradeId);
+
+            modelBuilder.Entity<KeyMetrics>()
+                .HasNoKey();
+
         }
     }
 

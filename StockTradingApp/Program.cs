@@ -17,6 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
 builder.Services.AddTransient<ITradeService, TradeService>();
 builder.Services.AddTransient<ITransactionService, TransactionService>();
+builder.Services.AddTransient<IKeyMetricsService, KeyMetricsService>();
 builder.Services.AddBlazoredModal();
 
 var app = builder.Build();
