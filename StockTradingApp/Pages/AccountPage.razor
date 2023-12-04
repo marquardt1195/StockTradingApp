@@ -1,0 +1,124 @@
+﻿@page "/account"
+@using Data;
+@using Services;
+@inject IAccountService accountService
+@inject ApplicationDbContext dbContext
+
+
+<h3 class="main-text">Account Information</h3>
+
+<style>
+    .add-trade-border {
+        border-radius: 10px;
+        padding: 5px;
+        width: 10%;
+        background-color: white;
+    }
+
+    .table-bal {
+        border-radius: 10px;
+        padding: 10px;
+        width: 30%;
+        background-color: #EAECF1;
+        text-align: center;
+        margin: auto;
+    }
+
+    .main-text {
+        color: white;
+    }
+</style>
+
+@if(showPrincipal)
+{
+    <table class="table table-bal table-hover">
+        <thead>
+            <tr>
+                <th>Starting Balance</th>
+                <th>Starting Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    @if (isEditMode)
+                    {
+                        <input type="text" @bind-value="@account.principal_balance" />
+                    }
+                    else
+                    {
+                        @account.principal_balance.ToString("C")
+                    }
+                </td>
+                <td>
+                    @if (isEditMode)
+                    {
+                        <input type="date" @bind-value="@account.principal_start_date" />
+                    }
+                    else
+                    {
+                        @account.principal_start_date.ToString("dd/MM/yyyy")
+                    }
+                </td>
+                <td>
+                    @if (!isEditMode)
+                    {
+                        <button class="btn btn-primary btn-sm" @onclick="()=>EditPrincipal()"><i class="fa fa-pencil"></i></button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-success btn-sm" @onclick="()=>SaveChanges()"><i class="fa fa-check"></i></button>
+                        <button class="btn btn-danger btn-sm" @onclick="CancelEdit"><i class="fa fa-times"></i></button>
+                    }
+                </td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="text-center">
+        <img src="/images/infinityLoading.gif">
+    </div>
+}
+
+
+
+
+@code {
+    public Account account = new Account();
+
+    private bool isEditMode = false;
+
+    private bool showPrincipal = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await LoadPrincipal();
+    }
+
+    private async Task LoadPrincipal()
+    {
+        account = await accountService.GetPrincipalBal();
+        showPrincipal = true;
+        StateHasChanged();
+    }
+
+    private void EditPrincipal()
+    {
+        isEditMode = true;
+    }
+
+    private void CancelEdit()
+    {
+        isEditMode = false;
+    }
+
+    private void SaveChanges()
+    {
+        accountService.UpdatePrincipalBal(account);
+        dbContext.SaveChanges();
+        isEditMode = false;
+    }
+}

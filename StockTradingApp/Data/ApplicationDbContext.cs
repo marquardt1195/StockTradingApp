@@ -20,6 +20,8 @@ namespace StockTradingApp.Data
 
         public DbSet<KeyMetrics> KeyMetrics { get; set; }
 
+        public DbSet<Account> Account { get; set; }
+
         //public DbSet<TradeViewModel> TradeViewModel { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -2,43 +2,117 @@
 @using Data;
 @using Services;
 @inject IKeyMetricsService keyMetricsService
+@inject ITradeService tradeService
 
-<h3>Results</h3>
-
-<table>
-    <thead>
-        <tr>
-            <th>Avg % Gain</th>
-            <th>Avg % Loss</th>
-            <th>Batting Avg</th>
-            <th>Win/Loss</th>
-            <th>Adj Win/Loss</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            @foreach (var metric in keyMetrics)
-            {
-                <td>@metric.Avg_percent_gain</td>
-                <td>@metric.Avg_percent_loss</td>
-                <td>@metric.Batting_avg</td>
-                <td>@metric.Win_loss_ratio</td>
-                <td>@metric.Adj_win_loss</td>
-            }
-        </tr>
-    </tbody>
-</table>
-
-@code {
-    public List<KeyMetrics> keyMetrics = new List<KeyMetrics>();
-
-    protected override void OnInitialized()
-    {
-         LoadMetrics();
+<style>
+    .table-km {
+        border-radius: 10px;
+        padding: 10px;
+        width: 40%;
+        background-color: #EAECF1;
+        text-align: center;
+        margin: auto;
     }
 
-    public List<KeyMetrics> LoadMetrics()
+    .table-net {
+        border-radius: 10px;
+        padding: 10px;
+        width: 60%;
+        background-color: #EAECF1;
+        text-align: center;
+        margin: auto;
+    }
+
+    .header-text {
+        color: white;
+        text-align: center;
+    }
+
+    .main-text {
+        color: white;
+    }
+</style>
+
+<h3 class="main-text">Results</h3>
+
+@if (isLoading == false)
+{
+    <h4 class="header-text">Key Metrics</h4>
+    <table class ="table table-hover table-km">
+        <thead>
+            <tr>
+                <th>Avg % Gain</th>
+                <th>Avg % Loss</th>
+                <th>Batting Avg</th>
+                <th>W/L</th>
+                <th>Adj W/L</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+
+                <td>@(keyMetrics.Avg_percent_gain.HasValue ? keyMetrics.Avg_percent_gain.Value.ToString("P") : string.Empty)</td>
+                <td>@(keyMetrics.Avg_percent_loss.HasValue ? keyMetrics.Avg_percent_loss.Value.ToString("P") : string.Empty)</td>
+                <td>@(keyMetrics.Batting_avg.HasValue ? keyMetrics.Batting_avg.Value.ToString("P") : string.Empty)</td>
+                <td>@keyMetrics.Win_loss_ratio</td>
+                <td>@keyMetrics.Adj_win_loss</td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <br/>
+
+    <h4 class="header-text">Net</h4>
+    <table class="table table-hover table-net">
+        <thead>
+            <tr>
+                <th>P/L $</th>
+                <th>P/L %</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Total Trades</th>
+                <th>LG % Gain</th>
+                <th>LG % Loss</th>
+                <th>Avg Win Hold</th>
+                <th>Avg Loss Hold</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+
+            </tr>
+        </tbody>
+    </table>
+
+}
+else
+{
+    <div class="text-center">
+        <img src="/images/infinityLoading.gif">
+    </div>
+}
+
+
+
+
+@code {
+    public KeyMetrics keyMetrics = new KeyMetrics();
+
+    private bool isLoading = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        keyMetrics = keyMetricsService.GetKeyMetrics();
+        if(firstRender)
+        {
+            await LoadKeyMetrics();
+            StateHasChanged();
+        }
+    }
+
+    public async Task LoadKeyMetrics()
+    {
+        keyMetrics = await keyMetricsService.GetKeyMetrics();
+        isLoading = false;
+        StateHasChanged();
     }
 }

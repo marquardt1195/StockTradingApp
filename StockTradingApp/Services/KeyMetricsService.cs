@@ -13,11 +13,12 @@ namespace StockTradingApp.Services
             _dbContext = dbContext;
         }
 
-        public List<KeyMetrics> GetKeyMetrics()
+        public async Task<KeyMetrics> GetKeyMetrics()
         {
-           // var key_metrics = "EXEC sp_getKeyMetrics";
-           // return _dbContext.KeyMetrics.FromSqlRaw(key_metrics).SingleOrDefault();
-            return _dbContext.KeyMetrics.ToList();
+            var key_metrics = "EXEC sp_getKeyMetrics";
+            await _dbContext.Database.ExecuteSqlRawAsync(key_metrics);
+            //return await _dbContext.KeyMetrics.FromSqlRaw(key_metrics).SingleOrDefaultAsync();
+            return _dbContext.KeyMetrics.SingleOrDefault();
         }
 
     }

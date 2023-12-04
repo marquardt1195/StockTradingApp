@@ -10,18 +10,23 @@
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <div class="nav-item px-3">
+            <NavLink class="nav-link" href="account">
+                <span class="oi oi-person" aria-hidden="true"></span> Account
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
             <NavLink class="nav-link" href="trades">
-                <span class="oi oi-plus" aria-hidden="true"></span> Trades
+                <span class="oi oi-list" aria-hidden="true"></span> Trades
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="combined">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Transactions
+                <span class="oi oi-list" aria-hidden="true"></span> Transactions
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="results">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Results
+                <span class="oi oi-graph " aria-hidden="true"></span> Results
             </NavLink>
         </div>
     </nav>

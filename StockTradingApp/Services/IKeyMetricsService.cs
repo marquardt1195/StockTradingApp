@@ -4,6 +4,7 @@ namespace StockTradingApp.Services
 {
     public interface IKeyMetricsService
     {
-        List<KeyMetrics> GetKeyMetrics();
+        Task<KeyMetrics> GetKeyMetrics();
+
     }
 }
