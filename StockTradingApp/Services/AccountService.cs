@@ -21,6 +21,7 @@ namespace StockTradingApp.Services
         public async void UpdatePrincipalBal(Account updatedAccount)
         {
             var existingAccount =  await GetPrincipalBal();
+
             existingAccount.Id = updatedAccount.Id;
             existingAccount.principal_balance = updatedAccount.principal_balance;
             existingAccount.principal_start_date = updatedAccount.principal_start_date;

@@ -1,0 +1,49 @@
+﻿@page "/test"
+@using Data;
+@using Data.ViewModels;
+@using Services;
+@inject IResultService resultService
+
+
+<h4 class="header-text">Net</h4>
+<table class="table table-hover table-net">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>P/L $</th>
+            <th>P/L %</th>
+            <th>Wins</th>
+            <th>Losses</th>
+            <th>Total Trades</th>
+            <th>LG % Gain</th>
+            <th>LG % Loss</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@netResultVM.Id</td>
+            <td>@netResultVM.Pl_dollar</td>
+            <td>@netResultVM.Pl_percent</td>
+            <td>@netResultVM.Num_wins</td>
+            <td>@netResultVM.Num_losses</td>
+            <td>@netResultVM.Total_trades</td>
+            <td>@netResultVM.Lg_win</td>
+            <td>@netResultVM.Lg_loss</td>
+        </tr>
+    </tbody>
+</table>
+
+@code {
+
+    public NetResultViewModel netResultVM = new NetResultViewModel();
+
+    protected override void OnInitialized()
+    {
+        // LoadNetResults();
+    }
+
+    // public void LoadNetResults()
+    // {
+    //     netResultVM = resultService.GetTestResults();
+    // }
+}

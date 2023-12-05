@@ -22,6 +22,8 @@ namespace StockTradingApp.Data
 
         public DbSet<Account> Account { get; set; }
 
+        public DbSet<NetResultViewModel> NetResultViewModel { get; set; }
+
         //public DbSet<TradeViewModel> TradeViewModel { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,7 +1,8 @@
 ﻿@page "/results"
 @using Data;
+@using Data.ViewModels;
 @using Services;
-@inject IKeyMetricsService keyMetricsService
+@inject IResultService resultService
 @inject ITradeService tradeService
 
 <style>
@@ -35,10 +36,10 @@
 
 <h3 class="main-text">Results</h3>
 
-@if (isLoading == false)
+@if (isLoaded)
 {
     <h4 class="header-text">Key Metrics</h4>
-    <table class ="table table-hover table-km">
+    <table class="table table-hover table-km">
         <thead>
             <tr>
                 <th>Avg % Gain</th>
@@ -59,8 +60,8 @@
             </tr>
         </tbody>
     </table>
-    <br/>
-    <br/>
+    <br />
+    <br />
 
     <h4 class="header-text">Net</h4>
     <table class="table table-hover table-net">
@@ -73,13 +74,17 @@
                 <th>Total Trades</th>
                 <th>LG % Gain</th>
                 <th>LG % Loss</th>
-                <th>Avg Win Hold</th>
-                <th>Avg Loss Hold</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-
+                <td>@netResultVM.Pl_dollar.ToString("C")</td>
+                <td>@netResultVM.Pl_percent.ToString("P")</td>
+                <td>@netResultVM.Num_wins</td>
+                <td>@netResultVM.Num_losses</td>
+                <td>@netResultVM.Total_trades</td>
+                <td>@netResultVM.Lg_win.ToString("P")</td>
+                <td>@netResultVM.Lg_loss.ToString("P")</td>
             </tr>
         </tbody>
     </table>
@@ -98,21 +103,24 @@ else
 @code {
     public KeyMetrics keyMetrics = new KeyMetrics();
 
-    private bool isLoading = true;
+    public NetResultViewModel netResultVM = new NetResultViewModel();
+
+    private bool isLoaded = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender)
+        if (firstRender)
         {
-            await LoadKeyMetrics();
+            await LoadResults();
             StateHasChanged();
         }
     }
 
-    public async Task LoadKeyMetrics()
+    public async Task LoadResults()
     {
-        keyMetrics = await keyMetricsService.GetKeyMetrics();
-        isLoading = false;
+        keyMetrics = await resultService.GetKeyMetrics();
+        netResultVM = await resultService.GetNetResults();
+        isLoaded = true;
         StateHasChanged();
     }
 }

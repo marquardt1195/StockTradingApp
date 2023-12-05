@@ -44,7 +44,7 @@
                 <td>
                     @if (isEditMode)
                     {
-                        <input type="text" @bind-value="@account.principal_balance" />
+                        <input type="text" @bind="account.principal_balance" />
                     }
                     else
                     {
@@ -54,11 +54,11 @@
                 <td>
                     @if (isEditMode)
                     {
-                        <input type="date" @bind-value="@account.principal_start_date" />
+                        <input type="date" @bind="account.principal_start_date" />
                     }
                     else
                     {
-                        @account.principal_start_date.ToString("dd/MM/yyyy")
+                        @account.principal_start_date.ToString("MM/dd/yyyy")
                     }
                 </td>
                 <td>
