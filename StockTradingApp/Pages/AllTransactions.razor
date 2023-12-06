@@ -1,7 +1,8 @@
 ﻿@page "/transactions"
 @page "/transactionform/{pTransactionId:int?}"
 @using Data
-@using Services
+@using Services;
+@using StockTradingApp.Services.Interfaces
 @inject ITransactionService transactionService
 @inject NavigationManager NavigationManager
 @inject ApplicationDbContext dbContext

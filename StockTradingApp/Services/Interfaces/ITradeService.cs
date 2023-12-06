@@ -1,6 +1,6 @@
 ﻿using StockTradingApp.Data;
 
-namespace StockTradingApp.Services
+namespace StockTradingApp.Services.Interfaces
 {
     public interface ITradeService
     {

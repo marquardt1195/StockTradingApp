@@ -1,7 +1,7 @@
 ﻿using StockTradingApp.Data;
 using StockTradingApp.Data.ViewModels;
 
-namespace StockTradingApp.Services
+namespace StockTradingApp.Services.Interfaces
 {
     public interface ITransactionService
     {
@@ -17,6 +17,6 @@ namespace StockTradingApp.Services
 
         void DeleteTransaction(int transactionId);
 
-       // public Task<IEnumerable<TradeViewModel>> TradeTransactionCalculations(int tradeId);
+        // public Task<IEnumerable<TradeViewModel>> TradeTransactionCalculations(int tradeId);
     }
 }

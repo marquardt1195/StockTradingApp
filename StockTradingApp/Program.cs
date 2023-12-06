@@ -5,14 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using StockTradingApp;
 using StockTradingApp.Data;
 using StockTradingApp.Services;
-
+using StockTradingApp.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
 builder.Services.AddTransient<ITradeService, TradeService>();

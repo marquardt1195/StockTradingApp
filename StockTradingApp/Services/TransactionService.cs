@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StockTradingApp.Data;
 using StockTradingApp.Data.ViewModels;
+using StockTradingApp.Services.Interfaces;
 using System.Linq;
 
 namespace StockTradingApp.Services

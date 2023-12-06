@@ -18,7 +18,7 @@ namespace StockTradingApp.Data
 
         public DbSet<Transaction> Transactions { get; set; }
 
-        public DbSet<KeyMetrics> KeyMetrics { get; set; }
+        public DbSet<KeyMetricsViewModel> KeyMetrics { get; set; }
 
         public DbSet<Account> Account { get; set; }
 
@@ -35,7 +35,10 @@ namespace StockTradingApp.Data
                 .WithOne(t => t.Trade)
                 .HasForeignKey(t => t.TradeId);
 
-            modelBuilder.Entity<KeyMetrics>()
+            modelBuilder.Entity<KeyMetricsViewModel>()
+                .HasNoKey();
+
+            modelBuilder.Entity<NetResultViewModel>()
                 .HasNoKey();
 
         }

@@ -1,7 +1,7 @@
 ﻿@page "/results"
-@using Data;
 @using Data.ViewModels;
 @using Services;
+@using StockTradingApp.Services.Interfaces;
 @inject IResultService resultService
 @inject ITradeService tradeService
 
@@ -52,11 +52,11 @@
         <tbody>
             <tr>
 
-                <td>@(keyMetrics.Avg_percent_gain.HasValue ? keyMetrics.Avg_percent_gain.Value.ToString("P") : string.Empty)</td>
-                <td>@(keyMetrics.Avg_percent_loss.HasValue ? keyMetrics.Avg_percent_loss.Value.ToString("P") : string.Empty)</td>
-                <td>@(keyMetrics.Batting_avg.HasValue ? keyMetrics.Batting_avg.Value.ToString("P") : string.Empty)</td>
-                <td>@keyMetrics.Win_loss_ratio</td>
-                <td>@keyMetrics.Adj_win_loss</td>
+                <td>@keyMetricsVM.Avg_percent_gain.ToString("P")</td>
+                <td>@keyMetricsVM.Avg_percent_loss.ToString("P")</td>
+                <td>@keyMetricsVM.Batting_avg.ToString("P")</td>
+                <td>@keyMetricsVM.Win_loss_ratio</td>
+                <td>@keyMetricsVM.Adj_win_loss</td>
             </tr>
         </tbody>
     </table>
@@ -101,7 +101,7 @@ else
 
 
 @code {
-    public KeyMetrics keyMetrics = new KeyMetrics();
+    public KeyMetricsViewModel keyMetricsVM = new KeyMetricsViewModel();
 
     public NetResultViewModel netResultVM = new NetResultViewModel();
 
@@ -118,7 +118,7 @@ else
 
     public async Task LoadResults()
     {
-        keyMetrics = await resultService.GetKeyMetrics();
+        keyMetricsVM = await resultService.GetKeyMetrics();
         netResultVM = await resultService.GetNetResults();
         isLoaded = true;
         StateHasChanged();

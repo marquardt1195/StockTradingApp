@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StockTradingApp.Data;
-using StockTradingApp.Services;
+using StockTradingApp.Services.Interfaces;
 
 namespace StockTradingApp.Services
 {

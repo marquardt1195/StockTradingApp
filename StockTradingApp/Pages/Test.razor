@@ -2,6 +2,7 @@
 @using Data;
 @using Data.ViewModels;
 @using Services;
+@using StockTradingApp.Services.Interfaces;
 @inject IResultService resultService
 
 
@@ -9,7 +10,6 @@
 <table class="table table-hover table-net">
     <thead>
         <tr>
-            <th>Id</th>
             <th>P/L $</th>
             <th>P/L %</th>
             <th>Wins</th>
@@ -21,7 +21,6 @@
     </thead>
     <tbody>
         <tr>
-            <td>@netResultVM.Id</td>
             <td>@netResultVM.Pl_dollar</td>
             <td>@netResultVM.Pl_percent</td>
             <td>@netResultVM.Num_wins</td>

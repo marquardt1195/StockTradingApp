@@ -4,7 +4,6 @@ namespace StockTradingApp.Data.ViewModels
 {
     public class NetResultViewModel
     {
-        [Key]public int Id { get; set; }
         public double Pl_dollar {get; set; }
 
         public double Pl_percent { get; set; }
