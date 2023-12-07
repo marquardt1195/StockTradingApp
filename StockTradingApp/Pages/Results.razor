@@ -74,6 +74,8 @@
                 <th>Total Trades</th>
                 <th>LG % Gain</th>
                 <th>LG % Loss</th>
+                <th>Avg Win Hold</th>
+                <th>Avg Loss Hold</th>
             </tr>
         </thead>
         <tbody>
@@ -85,7 +87,47 @@
                 <td>@netResultVM.Total_trades</td>
                 <td>@netResultVM.Lg_win.ToString("P")</td>
                 <td>@netResultVM.Lg_loss.ToString("P")</td>
+                <td>@netResultVM.Win_hold</td>
+                <td>@netResultVM.Loss_hold</td>
             </tr>
+        </tbody>
+    </table>
+    <br />
+    <br />
+
+
+    <h4 class="header-text">Monthly</h4>
+    <table class="table table-hover table-net">
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>P/L $</th>
+                <th>P/L %</th>
+                <th>Avg % Gain</th>
+                <th>Avg % Loss</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Batting Avg</th>
+                <th>W/L</th>
+                <th>Adj W/L</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var result in monthlyResultVM)
+            {
+                <tr>
+                    <td>@result.Month_closed</td>
+                    <td>@result.Monthly_dollar_pl.ToString("C")</td>
+                    <td>@result.Monthly_percent_pl.ToString("P")</td>
+                    <td>@result.Monthly_avg_percent_gain.ToString("P")</td>
+                    <td>@result.Monthly_avg_percent_loss.ToString("P")</td>
+                    <td>@result.Monthly_wins</td>
+                    <td>@result.Monthly_losses</td>
+                    <td>@result.Monthly_batting_avg.ToString("P")</td>
+                    <td>@result.Monthly_winloss.ToString("P")</td>
+                    <td>@result.Monthly_adj_winloss.ToString("P")</td>
+                </tr>
+            }
         </tbody>
     </table>
 
@@ -98,12 +140,12 @@ else
 }
 
 
-
-
 @code {
     public KeyMetricsViewModel keyMetricsVM = new KeyMetricsViewModel();
 
     public NetResultViewModel netResultVM = new NetResultViewModel();
+
+    public List<MonthlyResultViewModel> monthlyResultVM = new List<MonthlyResultViewModel>();
 
     private bool isLoaded = false;
 
@@ -120,7 +162,9 @@ else
     {
         keyMetricsVM = await resultService.GetKeyMetrics();
         netResultVM = await resultService.GetNetResults();
+        monthlyResultVM = await resultService.GetMonthlyResults();
         isLoaded = true;
         StateHasChanged();
     }
+
 }

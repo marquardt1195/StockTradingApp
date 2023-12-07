@@ -7,5 +7,7 @@ namespace StockTradingApp.Services.Interfaces
         Task<KeyMetricsViewModel> GetKeyMetrics();
 
         Task<NetResultViewModel> GetNetResults();
+
+        Task<List<MonthlyResultViewModel>> GetMonthlyResults();
     }
 }

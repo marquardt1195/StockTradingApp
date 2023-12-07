@@ -17,5 +17,9 @@ namespace StockTradingApp.Data.ViewModels
         public double Lg_win { get; set; }
 
         public double Lg_loss { get; set; }
+
+        public int Win_hold { get; set; }
+
+        public int Loss_hold { get; set; }
     }
 }

@@ -24,7 +24,7 @@ namespace StockTradingApp.Data
 
         public DbSet<NetResultViewModel> NetResultViewModel { get; set; }
 
-        //public DbSet<TradeViewModel> TradeViewModel { get; set; }
+        public DbSet<MonthlyResultViewModel> MonthlyResultViewModel { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,6 +39,9 @@ namespace StockTradingApp.Data
                 .HasNoKey();
 
             modelBuilder.Entity<NetResultViewModel>()
+                .HasNoKey();
+
+            modelBuilder.Entity<MonthlyResultViewModel>()
                 .HasNoKey();
 
         }

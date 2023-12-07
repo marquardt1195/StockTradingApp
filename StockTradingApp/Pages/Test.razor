@@ -6,43 +6,52 @@
 @inject IResultService resultService
 
 
-<h4 class="header-text">Net</h4>
+<h4 class="header-text">Monthly</h4>
 <table class="table table-hover table-net">
     <thead>
         <tr>
+            <th>Month</th>
             <th>P/L $</th>
             <th>P/L %</th>
+            <th>Avg % Gain</th>
+            <th>Avg % Loss</th>
             <th>Wins</th>
             <th>Losses</th>
-            <th>Total Trades</th>
-            <th>LG % Gain</th>
-            <th>LG % Loss</th>
+            <th>Batting Avg</th>
+            <th>W/L</th>
+            <th>Adj W/L</th>
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>@netResultVM.Pl_dollar</td>
-            <td>@netResultVM.Pl_percent</td>
-            <td>@netResultVM.Num_wins</td>
-            <td>@netResultVM.Num_losses</td>
-            <td>@netResultVM.Total_trades</td>
-            <td>@netResultVM.Lg_win</td>
-            <td>@netResultVM.Lg_loss</td>
-        </tr>
+            @foreach (var monthlyResultVM in monthlyResultVM)
+            {
+            <tr>
+                <td>@monthlyResultVM.Month_closed</td>
+                <td>@monthlyResultVM.Monthly_dollar_pl</td>
+                <td>@monthlyResultVM.Monthly_percent_pl.ToString("P")</td>
+                <td>@monthlyResultVM.Monthly_avg_percent_gain.ToString("P")</td>
+                <td>@monthlyResultVM.Monthly_avg_percent_loss.ToString("P")</td>
+                <td>@monthlyResultVM.Monthly_wins</td>
+                <td>@monthlyResultVM.Monthly_losses.ToString("P")</td>
+                <td>@monthlyResultVM.Monthly_batting_avg</td>
+                <td>@monthlyResultVM.Monthly_winloss</td>
+                <td>@monthlyResultVM.Monthly_adj_winloss</td>
+            </tr>
+            }
     </tbody>
 </table>
 
 @code {
 
-    public NetResultViewModel netResultVM = new NetResultViewModel();
+    public List<MonthlyResultViewModel> monthlyResultVM = new List<MonthlyResultViewModel>();
 
     protected override void OnInitialized()
     {
-        // LoadNetResults();
+         LoadMonthly();
     }
 
-    // public void LoadNetResults()
-    // {
-    //     netResultVM = resultService.GetTestResults();
-    // }
+    public void LoadMonthly()
+    {
+        //monthlyResultVM = resultService.GetMonthlyResults().ToList();
+    }
 }

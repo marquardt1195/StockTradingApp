@@ -30,5 +30,11 @@ namespace StockTradingApp.Services
             return _dbContext.NetResultViewModel.FromSqlRaw(net_results).AsEnumerable().SingleOrDefault();
         }
 
+        public async Task<List<MonthlyResultViewModel>> GetMonthlyResults()
+        {
+            var monthly_results = "EXEC sp_getMonthlyResults";
+            return _dbContext.MonthlyResultViewModel.FromSqlRaw(monthly_results).ToList();
+        }
+
     }
 }
