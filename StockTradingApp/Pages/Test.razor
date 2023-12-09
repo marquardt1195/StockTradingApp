@@ -23,13 +23,18 @@
     }
 </style>
 
-<p>
-    <button @onclick="SetStock">Set Stock</button>
-</p>
 
-<div class="line-chart">
-    <canvas id="myChart1"></canvas>
-    <canvas id="myChart1"></canvas>
+<div class=" row">
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-header">
+                Bar Chart
+            </div>
+            <div class="card-body">
+                <canvas class="my-4 h-25" id="myChart1"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
 
 <table class="table table-hover table-striped table-net">
@@ -83,7 +88,15 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadPrincipalTest();
-        //await GetPrincipalTestData();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await SetStock();
+            StateHasChanged(); // Trigger a re-render after SetStock
+        }
     }
 
 

@@ -46,5 +46,10 @@ namespace StockTradingApp.Services
         {
             return _dbContext.PrincipalTest.ToList();
         }
+
+        public List<PrincipalTest> GetPrincipalTest2()
+        {
+            return _dbContext.PrincipalTest.ToList();
+        }
     }
 }

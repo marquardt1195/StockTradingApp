@@ -14,5 +14,8 @@ namespace StockTradingApp.Services.Interfaces
         Task<List<MonthlyResultViewModel>> GetMonthlyTestResults();
 
         Task<List<PrincipalTest>> GetPrincipalTest();
+
+        List<PrincipalTest> GetPrincipalTest2();
+
     }
 }
