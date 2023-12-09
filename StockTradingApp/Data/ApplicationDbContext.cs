@@ -22,6 +22,8 @@ namespace StockTradingApp.Data
 
         public DbSet<Account> Account { get; set; }
 
+        public DbSet<PrincipalTest> PrincipalTest { get; set; }
+
         public DbSet<NetResultViewModel> NetResultViewModel { get; set; }
 
         public DbSet<MonthlyResultViewModel> MonthlyResultViewModel { get; set; }
@@ -42,6 +44,9 @@ namespace StockTradingApp.Data
                 .HasNoKey();
 
             modelBuilder.Entity<MonthlyResultViewModel>()
+                .HasNoKey();
+
+            modelBuilder.Entity<PrincipalTest>()
                 .HasNoKey();
 
         }

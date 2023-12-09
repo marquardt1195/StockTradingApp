@@ -3,55 +3,122 @@
 @using Data.ViewModels;
 @using Services;
 @using StockTradingApp.Services.Interfaces;
+@using System.Text.Json
+@using Newtonsoft.Json
 @inject IResultService resultService
+@inject IJSRuntime JS
 
+<style>
+    .table-net {
+        border-radius: 10px;
+        padding: 10px;
+        width: 60%;
+        background-color: #EAECF1;
+        text-align: center;
+        margin: auto;
+    }
 
-<h4 class="header-text">Monthly</h4>
-<table class="table table-hover table-net">
+    .line-chart {
+        width: 45%;
+    }
+</style>
+
+<p>
+    <button @onclick="SetStock">Set Stock</button>
+</p>
+
+<div class="line-chart">
+    <canvas id="myChart1"></canvas>
+    <canvas id="myChart1"></canvas>
+</div>
+
+<table class="table table-hover table-striped table-net">
     <thead>
         <tr>
-            <th>Month</th>
-            <th>P/L $</th>
-            <th>P/L %</th>
-            <th>Avg % Gain</th>
-            <th>Avg % Loss</th>
-            <th>Wins</th>
-            <th>Losses</th>
-            <th>Batting Avg</th>
-            <th>W/L</th>
-            <th>Adj W/L</th>
+            <th>Day</th>
+            <th>Principal</th>
         </tr>
     </thead>
     <tbody>
-            @foreach (var monthlyResultVM in monthlyResultVM)
-            {
+        @foreach (var prin in principalTest)
+        {
             <tr>
-                <td>@monthlyResultVM.Month_closed</td>
-                <td>@monthlyResultVM.Monthly_dollar_pl</td>
-                <td>@monthlyResultVM.Monthly_percent_pl.ToString("P")</td>
-                <td>@monthlyResultVM.Monthly_avg_percent_gain.ToString("P")</td>
-                <td>@monthlyResultVM.Monthly_avg_percent_loss.ToString("P")</td>
-                <td>@monthlyResultVM.Monthly_wins</td>
-                <td>@monthlyResultVM.Monthly_losses.ToString("P")</td>
-                <td>@monthlyResultVM.Monthly_batting_avg</td>
-                <td>@monthlyResultVM.Monthly_winloss</td>
-                <td>@monthlyResultVM.Monthly_adj_winloss</td>
+                <td>@prin.day</td>
+                <td>@prin.principal</td>
             </tr>
-            }
+        }
     </tbody>
 </table>
+
+
+<script type="text/javascript">
+    var ctx = document.getElementById("myChart1").getContext("2d");
+    var myLine = new Chart(ctx).Line(chartData, {
+        showTooltips: false,
+        onAnimationComplete: function () {
+
+            var ctx = this.chart.ctx;
+            ctx.font = this.scale.font;
+            ctx.fillStyle = this.scale.textColor
+            ctx.textAlign = "center";
+            ctx.textBaseline = "bottom";
+
+            this.datasets.forEach(function (dataset) {
+                dataset.points.forEach(function (points) {
+                    ctx.fillText(points.value, points.x, points.y);
+                });
+            })
+        }
+    });
+</script>
+
+
 
 @code {
 
     public List<MonthlyResultViewModel> monthlyResultVM = new List<MonthlyResultViewModel>();
 
-    protected override void OnInitialized()
+    public List<PrincipalTest> principalTest = new List<PrincipalTest>();
+
+    protected override async Task OnInitializedAsync()
     {
-         LoadMonthly();
+        await LoadPrincipalTest();
+        //await GetPrincipalTestData();
     }
 
-    public void LoadMonthly()
+
+    public async Task LoadMonthly()
     {
-        //monthlyResultVM = resultService.GetMonthlyResults().ToList();
+        monthlyResultVM = await resultService.GetMonthlyTestResults();
     }
+
+    public async Task LoadPrincipalTest()
+    {
+        principalTest = await resultService.GetPrincipalTest();
+    }
+
+    private async Task SetStock()
+    {
+        await JS.InvokeVoidAsync("createChart", new
+        {
+            canvasId = "myChart1",
+            onAnimationComplete = "function1",
+            chartType = "line", //type easily changed here        
+            chartData = new
+            {
+                labels = principalTest.Select(p => p.day),
+                datasets = new object[]
+                {
+                    new
+                    {
+                        borderColor = "#A0AAC1",
+                        backgroundColor = "rgba(160, 170, 193, 0.2)",
+                        data = principalTest.Select(p => p.principal)
+                    }
+                }
+            }
+        });
+    }
+
+
 }

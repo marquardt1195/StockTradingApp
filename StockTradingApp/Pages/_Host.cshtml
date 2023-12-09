@@ -15,7 +15,6 @@
     <link rel="icon" type="image/png" href="favicon.png"/>
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
 
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
@@ -36,5 +35,18 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script src="CustomJS/common.js"></script>
     <script src="_framework/blazor.server.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
+    <script>
+        function createChart(options) {
+            var element = document.getElementById(options.canvasId);
+            var ctx = element.getContext("2d");
+            var myLine = new Chart(ctx, {
+                type: options.chartType,
+                data: options.chartData,
+                showTooltips: false,
+                onAnimationComplete: window[options.onAnimationComplete]
+            });
+        }
+    </script>
 </body>
 </html>

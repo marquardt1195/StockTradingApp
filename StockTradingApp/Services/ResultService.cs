@@ -36,5 +36,15 @@ namespace StockTradingApp.Services
             return _dbContext.MonthlyResultViewModel.FromSqlRaw(monthly_results).ToList();
         }
 
+        public async Task<List<MonthlyResultViewModel>> GetMonthlyTestResults()
+        {
+            var monthly_results = "EXEC sp_getMonthlyResults";
+            return _dbContext.MonthlyResultViewModel.FromSqlRaw(monthly_results).ToList();
+        }
+
+        public async Task<List<PrincipalTest>> GetPrincipalTest()
+        {
+            return _dbContext.PrincipalTest.ToList();
+        }
     }
 }

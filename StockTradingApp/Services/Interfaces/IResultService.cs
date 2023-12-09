@@ -1,4 +1,5 @@
-﻿using StockTradingApp.Data.ViewModels;
+﻿using StockTradingApp.Data;
+using StockTradingApp.Data.ViewModels;
 
 namespace StockTradingApp.Services.Interfaces
 {
@@ -9,5 +10,9 @@ namespace StockTradingApp.Services.Interfaces
         Task<NetResultViewModel> GetNetResults();
 
         Task<List<MonthlyResultViewModel>> GetMonthlyResults();
+
+        Task<List<MonthlyResultViewModel>> GetMonthlyTestResults();
+
+        Task<List<PrincipalTest>> GetPrincipalTest();
     }
 }
