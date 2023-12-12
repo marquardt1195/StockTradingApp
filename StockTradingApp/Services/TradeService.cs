@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StockTradingApp.Data;
+using StockTradingApp.Data.ViewModels;
+using StockTradingApp.Pages;
 using StockTradingApp.Services.Interfaces;
 
 namespace StockTradingApp
@@ -20,6 +22,14 @@ namespace StockTradingApp
             //return _dbContext.Trades.OrderByDescending(trade => trade.TradeId).ToList();
         }
 
+        public async Task<List<TradesWithPnlViewModel>> GetTradesWithPnl()
+        {
+            var getTradesWithPnl = "EXEC sp_getTradesWithPnl";
+            var tradesWithPnl = _dbContext.TradesWithPnlViewModel.FromSqlRaw(getTradesWithPnl).ToList();
+            var orderedTrades = tradesWithPnl.OrderByDescending(trade => trade.TradeId).ToList();
+            return orderedTrades;
+        }
+
         public async Task<List<Trade>> GetAllExistingTrades()
         {
             return _dbContext.Trades.OrderByDescending(trade => trade.TradeId).ToList();
@@ -28,6 +38,8 @@ namespace StockTradingApp
         public void AddTrade(Trade trade)
         {
             _dbContext.Trades.Add(trade);
+            _dbContext.SaveChanges();
+
         }
 
         public Trade GetTradeById(int TradeId) 
@@ -62,10 +74,19 @@ namespace StockTradingApp
             existingTrade.ShareSellDate = updatedTrade.ShareSellDate;
         }
 
-        public int GetNextTradeId(int pTradeId)
+        public int RemoveRecentTrade()
         {
-            int lastTradeId = Convert.ToInt32(_dbContext.Trades.SingleOrDefault(x=>x.TradeId == pTradeId));
-            return lastTradeId;
+            var maxTrade = _dbContext.Trades.OrderByDescending(t => t.TradeId).FirstOrDefault();
+
+            // Check if any trades exist
+            if (maxTrade != null)
+            {
+                _dbContext.Trades.Remove(maxTrade);
+                _dbContext.SaveChanges();
+                return maxTrade.TradeId;
+            }
+            return 0;
         }
+
     }
 }

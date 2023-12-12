@@ -52,8 +52,8 @@
         <tbody>
             <tr>
 
-                <td style="color: @GetColor(keyMetricsVM.Avg_percent_gain)">@keyMetricsVM.Avg_percent_gain.ToString("P")</td>
-                <td style="color: @GetColor(keyMetricsVM.Avg_percent_loss)">@keyMetricsVM.Avg_percent_loss.ToString("P")</td>
+                <td class="fw-bold" style="color: @GetColor(keyMetricsVM.Avg_percent_gain)">@keyMetricsVM.Avg_percent_gain.ToString("P")</td>
+                <td class="fw-bold" style="color: @GetColor(keyMetricsVM.Avg_percent_loss)">@keyMetricsVM.Avg_percent_loss.ToString("P")</td>
                 <td>@keyMetricsVM.Batting_avg.ToString("P")</td>
                 <td>@keyMetricsVM.Win_loss_ratio</td>
                 <td>@keyMetricsVM.Adj_win_loss</td>
@@ -80,8 +80,8 @@
         </thead>
         <tbody>
             <tr>
-                <td style="color: @GetColor(netResultVM.Pl_dollar)">@netResultVM.Pl_dollar.ToString("C")</td>
-                <td style="color: @GetColor(netResultVM.Pl_percent)">@netResultVM.Pl_percent.ToString("P")</td>
+                <td class="fw-bold" style="color: @GetColor(netResultVM.Pl_dollar)">@netResultVM.Pl_dollar.ToString("C")</td>
+                <td class="fw-bold" style="color: @GetColor(netResultVM.Pl_percent)">@netResultVM.Pl_percent.ToString("P")</td>
                 <td>@netResultVM.Num_wins</td>
                 <td>@netResultVM.Num_losses</td>
                 <td>@netResultVM.Total_trades</td>
@@ -117,13 +117,13 @@
             {
                 <tr>
                     <td>@result.Month_closed</td>
-                    <td style ="color: @GetColor(result.Monthly_dollar_pl)">@result.Monthly_dollar_pl.ToString("C")</td>
-                    <td style ="color: @GetColor(result.Monthly_percent_pl)">@result.Monthly_percent_pl.ToString("P")</td>
-                    <td>@result.Monthly_avg_percent_gain.ToString("P")</td>
-                    <td>@result.Monthly_avg_percent_loss.ToString("P")</td>
+                    <td class="fw-bold" style="color: @GetColor(result.Monthly_dollar_pl)">@result.Monthly_dollar_pl?.ToString("C")</td>
+                    <td class="fw-bold" style="color: @GetColor(result.Monthly_percent_pl)">@result.Monthly_percent_pl?.ToString("P")</td>
+                    <td>@result.Monthly_avg_percent_gain?.ToString("P")</td>
+                    <td>@result.Monthly_avg_percent_loss?.ToString("P")</td>
                     <td>@result.Monthly_wins</td>
                     <td>@result.Monthly_losses</td>
-                    <td>@result.Monthly_batting_avg.ToString("P")</td>
+                    <td>@result.Monthly_batting_avg?.ToString("P")</td>
                     <td>@result.Monthly_winloss</td>
                     <td>@result.Monthly_adj_winloss</td>
                 </tr>
@@ -168,7 +168,7 @@ else
         StateHasChanged();
     }
 
-    public string GetColor(decimal value)
+    public string GetColor(decimal? value)
     {
         return value >= 0 ? "green" : "red";
     }

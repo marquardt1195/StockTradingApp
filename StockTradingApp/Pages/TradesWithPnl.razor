@@ -1,0 +1,77 @@
+﻿@page "/calculatedtrades"
+@using Data.ViewModels
+@using Services
+@using Services.Interfaces
+@inject ITradeService tradeService
+
+<style>
+    .tableRound {
+        border-radius: 10px;
+        padding: 10px;
+        width: 75%;
+        background-color: #EAECF1;
+        text-align: center;
+    }
+</style>
+
+@if (tradesWithPnlVM.Any())
+{
+<table class="table table-hover table-striped tableRound">
+    <thead>
+        <tr>
+            <th>Trade Id</th>
+            <th>Symbol</th>
+            <th>Cost Basis</th>
+            <th>Sell Basis</th>
+            <th>$ P/L</th>
+            <th>% P/L</th>
+            <th>Hold Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var t in tradesWithPnlVM)
+        {
+            <tr>
+                <td>@t.TradeId</td>
+                <td class="fw-bold">@t.StockSymbol</td>
+                <td>@t.CostBasis?.ToString("C")</td>
+                <td>@t.SellBasis?.ToString("C")</td>
+                    <td class="fw-bold" style="color: @GetColor(t.DollarPnl)">@t.DollarPnl?.ToString("C")</td>
+                    <td class="fw-bold" style="color: @GetColor(t.PercentPnl)">@t.PercentPnl?.ToString("P")</td>
+                <td>@t.HoldTime</td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+else
+{
+    <div class="text-center">
+        <img src="/images/infinityLoading.gif">
+    </div>
+}
+
+@code {
+    public List<TradesWithPnlViewModel> tradesWithPnlVM = new List<TradesWithPnlViewModel>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadTradesWithPnl();
+        }
+    }
+
+
+    private async Task LoadTradesWithPnl()
+    {
+        tradesWithPnlVM = await tradeService.GetTradesWithPnl();
+        StateHasChanged();
+    }
+
+    public string GetColor(decimal? value)
+    {
+        return value >= 0 ? "green" : "red";
+    }
+}

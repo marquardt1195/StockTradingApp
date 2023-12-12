@@ -32,6 +32,9 @@
             <div class="card-body">
                 <canvas class="my-4 h-25" id="myChart1"></canvas>
             </div>
+            <div class="card-body">
+                <canvas class="my-4 h-25" id="myChart2"></canvas>
+            </div>
         </div>
     </div>
 </div>
@@ -53,29 +56,6 @@
         }
     </tbody>
 </table>
-
-
-@* <script type="text/javascript">
-    var ctx = document.getElementById("myChart1").getContext("2d");
-    var myLine = new Chart(ctx).Line(chartData, {
-        showTooltips: false,
-        onAnimationComplete: function () {
-
-            var ctx = this.chart.ctx;
-            ctx.font = this.scale.font;
-            ctx.fillStyle = this.scale.textColor
-            ctx.textAlign = "center";
-            ctx.textBaseline = "bottom";
-
-            this.datasets.forEach(function (dataset) {
-                dataset.points.forEach(function (points) {
-                    ctx.fillText(points.value, points.x, points.y);
-                });
-            })
-        }
-    });
-</script> *@
-
 
 
 @code {
@@ -113,23 +93,6 @@
     {
         await JS.InvokeVoidAsync("createChart", new
         {
-            // canvasId = "myChart1",
-            // onAnimationComplete = "function",
-            // chartType = "line", //type easily changed here        
-            // chartData = new
-            // {
-            //     labels = principalTest.Select(p => p.day),
-            //     datasets = new object[]
-            //     {
-            //         new
-            //         {
-            //             borderColor = "#A0AAC1",
-            //             backgroundColor = "rgba(160, 170, 193, 0.2)",
-            //             data = principalTest.Select(p => p.principal)
-            //         }
-            //     }
-            // }
-
             canvasId,
             onAnimationComplete,
             chartType,
@@ -139,7 +102,7 @@
 
     private async Task ConfigureCharts()
     {
-        var chartData = new
+        var chartData1 = new
         {
             labels = principalTest.Select(p => p.day),
             datasets = new object[]
@@ -152,7 +115,24 @@
                 }
             }
         };
-        await SetStock("myChart1", "function", "line", chartData);
+        await SetStock("myChart1", "function", "line", chartData1);
+
+        
+        
+        var chartData2 = new
+        {
+            labels = principalTest.Select(p => p.day),
+            datasets = new object[]
+            {
+                new
+                {
+                    borderColor = "#A0AAC1",
+                    backgroundColor = "rgba(160, 170, 193, 0.2)",
+                    data = principalTest.Select(p => p.principal)
+                }
+            }
+        };
+        await SetStock("myChart2", "function", "line", chartData2);
     }
 
 

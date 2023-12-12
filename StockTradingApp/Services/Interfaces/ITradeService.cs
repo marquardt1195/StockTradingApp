@@ -1,10 +1,11 @@
 ﻿using StockTradingApp.Data;
+using StockTradingApp.Data.ViewModels;
 
 namespace StockTradingApp.Services.Interfaces
 {
     public interface ITradeService
     {
-        public Task<List<Trade>> GetAllTrades();
+        Task<List<Trade>> GetAllTrades();
 
         Trade GetTradeById(int StockId);
 
@@ -14,10 +15,13 @@ namespace StockTradingApp.Services.Interfaces
 
         void DeleteTrade(int StockId);
 
-        int GetNextTradeId(int pTradeId);
-
         List<Trade> GetTradeBySymbol(string pStockSymbol);
 
-        public Task<List<Trade>> GetAllExistingTrades();
+        Task<List<Trade>> GetAllExistingTrades();
+
+        int RemoveRecentTrade();
+
+        Task<List<TradesWithPnlViewModel>> GetTradesWithPnl();
+
     }
 }

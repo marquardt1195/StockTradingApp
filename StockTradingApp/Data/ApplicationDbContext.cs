@@ -28,6 +28,8 @@ namespace StockTradingApp.Data
 
         public DbSet<MonthlyResultViewModel> MonthlyResultViewModel { get; set; }
 
+        public DbSet<TradesWithPnlViewModel> TradesWithPnlViewModel { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
