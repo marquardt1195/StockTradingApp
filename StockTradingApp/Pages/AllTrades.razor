@@ -77,8 +77,8 @@
                         <td>@trade.NumberSharesSold</td>
                         <td>@(trade.ShareSellDate.HasValue ? trade.ShareSellDate.Value.ToString("MM/dd/yy") : string.Empty)</td>
                         <td>
-                            <button class="btn btn-success btn-sm" @onclick="() => OnAddTransaction(trade.TradeId)"><i class="fa fa-plus"></i></button>
-                            <button class="btn btn-danger btn-sm" @onclick="()=>DeleteAlert(trade.TradeId)"><i class="fa fa-minus"></i></button>
+@*                             <button class="btn btn-success btn-sm" @onclick="() => OnAddTransaction(trade.TradeId)"><i class="fa fa-plus"></i></button>
+ *@                            <button class="btn btn-danger btn-sm" @onclick="()=>DeleteAlert(trade.TradeId)"><i class="fa fa-times"></i></button>
                         </td>
                     </tr>
                 }

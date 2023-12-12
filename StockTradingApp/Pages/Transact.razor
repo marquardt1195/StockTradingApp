@@ -1,6 +1,6 @@
-﻿@page "/combined"
-@page "/combinedform/{pTradeId:int?}"
-@page "/combinedform/{pTradeId:int?}/{pTransactionId:int?}"
+﻿@page "/transact"
+@page "/transactform/{pTradeId:int?}"
+@page "/transactform/{pTradeId:int?}/{pTransactionId:int?}"
 @using Services;
 @using Data;
 @using Data.ViewModels;
@@ -288,7 +288,7 @@ else
     {
         transactionService.DeleteTransaction(transactionId);
         transactionList = await transactionService.GetTransactionByTradeId(pTradeId);
-        NavigationManager.NavigateTo($"/combinedform/{pTradeId}");
+        NavigationManager.NavigateTo($"/transactform/{pTradeId}");
         ShowDeleteModal = false;
     }
 
@@ -307,7 +307,7 @@ else
             Show = true;
             title = "Edit";
             transaction = transactionService.GetTransactionById(pTransactionId);
-            //NavigationManager.NavigateTo($"/combinedform/{pTradeId}/{pTransactionId}");
+            //NavigationManager.NavigateTo($"/transactform/{pTradeId}/{pTransactionId}");
         }
     }
 
@@ -323,7 +323,7 @@ else
             transactionService.UpdateTransaction(transaction);
         }
         dbContext.SaveChanges();    //once SaveChanges, then transactionId incremented by 1. 0 before this point.
-        NavigationManager.NavigateTo($"/combinedform");
+        NavigationManager.NavigateTo($"/transactform");
         transactionList = await transactionService.GetTransactionByTradeId(pTradeId);
         StateHasChanged();
         await LoadTransactions();
@@ -356,14 +356,18 @@ else
         trade.TradeId = pTradeId;
         trade.StockSymbol = pStockSymbol;
         transaction = new Transaction { TradeId = trade.TradeId, StockSymbol = trade.StockSymbol };
+        trade = new Trade();
     }
 
     private async Task CloseModal()
     {
+        if (String.IsNullOrEmpty(transaction.StockSymbol) && transaction.TransactionId == 0)
+        {
+            tradeService.RemoveRecentTrade();
+        }
         Show = false;
-        ShowEditTransactionModal = false;
         StateHasChanged();
-        await LoadTransactions();
+        await transactionService.GetTransactionByTradeId(transaction.TradeId);
     }
 
     private async void HandleNewSubmit()

@@ -39,7 +39,6 @@ namespace StockTradingApp
         {
             _dbContext.Trades.Add(trade);
             _dbContext.SaveChanges();
-
         }
 
         public Trade GetTradeById(int TradeId) 
