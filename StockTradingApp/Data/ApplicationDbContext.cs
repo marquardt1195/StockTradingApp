@@ -30,6 +30,10 @@ namespace StockTradingApp.Data
 
         public DbSet<TradesWithPnlViewModel> TradesWithPnlViewModel { get; set; }
 
+        public DbSet<CumulativePnlPositionViewModel> CumulativePnlPositionVM { get; set; }
+
+        public DbSet<PositionsViewModel> PositionsViewModel { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

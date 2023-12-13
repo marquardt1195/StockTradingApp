@@ -20,6 +20,8 @@ namespace StockTradingApp.Data
 
         public DateTime? EntryDate { get; set; }
 
+        //public decimal? DollarStopLoss { get; set; }
+
         public double? SellPrice { get; set; }
 
         public int? NumberSharesExited { get; set; }

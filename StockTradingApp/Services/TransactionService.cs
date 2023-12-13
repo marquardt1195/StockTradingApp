@@ -53,6 +53,7 @@ namespace StockTradingApp.Services
             existingTransaction.EntryPrice = updatedTransaction.EntryPrice;
             existingTransaction.NumberSharesEntered = updatedTransaction.NumberSharesEntered;
             existingTransaction.EntryDate = updatedTransaction.EntryDate;
+            //existingTransaction.DollarStopLoss = updatedTransaction.DollarStopLoss;
             existingTransaction.SellPrice = updatedTransaction.SellPrice;
             existingTransaction.NumberSharesExited = updatedTransaction.NumberSharesExited;
             existingTransaction.ExitDate = updatedTransaction.ExitDate;

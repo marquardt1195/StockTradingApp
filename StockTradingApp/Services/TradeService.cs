@@ -87,5 +87,20 @@ namespace StockTradingApp
             return 0;
         }
 
+        public async Task<List<CumulativePnlPositionViewModel>> GetCumulativePnl()
+        {
+            var getTradesWithPnl = "EXEC sp_plotTradePnl";
+            //var tradesWithPnl = _dbContext.CumulativePnlPositionVM.FromSqlRaw(getTradesWithPnl).ToList();
+            return _dbContext.CumulativePnlPositionVM.FromSqlRaw(getTradesWithPnl).ToList();
+            //var orderedTrades = tradesWithPnl.OrderByDescending(trade => trade.TradeId).ToList();
+            //return orderedTrades;
+        }
+
+        public async Task<List<PositionsViewModel>> GetPositions()
+        {
+            var getPositions = "EXEC sp_getPositions";
+            return _dbContext.PositionsViewModel.FromSqlRaw(getPositions).ToList();
+        }
+
     }
 }

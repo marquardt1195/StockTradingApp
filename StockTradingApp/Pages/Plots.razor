@@ -21,53 +21,73 @@
     .line-chart {
         width: 45%;
     }
+
+    .table-responsive {
+        max-height: 285px;
+    }
+
+    .card-body {
+        background-color: #F2F3F5;
+    }
+
+    .card-header {
+        background-color: #3C404A;
+        color: white;
+    }
 </style>
 
 
 <div class=" row">
-    <div class="col-sm-6">
+    <div class="col-sm-8">
         <div class="card">
             <div class="card-header">
-                Bar Chart
+                Cumulative $ Profit/Loss
             </div>
             <div class="card-body">
-                <canvas class="my-4 h-25" id="myChart1"></canvas>
-            </div>
-            <div class="card-body">
-                <canvas class="my-4 h-25" id="myChart2"></canvas>
+                <div class="row">
+                    <div class="col-8">
+                        <canvas id="CumulativePnlPos"></canvas>
+                    </div>
+                    <div class="col-4 mt-4 table-responsive">
+                        <table class="table table-hover table-striped table-net">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>$ P/L</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int tradeCount = 1;
+                                }
+                                @foreach (var trades in cumulativePnlPositionVM)
+                                {
+                                    <tr>
+                                        <td>@tradeCount</td>
+                                        <td class="fw-bold" style="color: @GetColor(trades.CumulativeDollarPnl)">@trades.CumulativeDollarPnl.ToString("C")</td>
+                                    </tr>
+                                    tradeCount++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<table class="table table-hover table-striped table-net">
-    <thead>
-        <tr>
-            <th>TradeID</th>
-            <th>$ Pnl</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var trades in tradesWithPnlVM)
-        {
-            <tr>
-                <td>@trades.TradeId</td>
-                <td>@trades.DollarPnl</td>
-            </tr>
-        }
-    </tbody>
-</table>
 
 
 @code {
 
     public List<MonthlyResultViewModel> monthlyResultVM = new List<MonthlyResultViewModel>();
 
-    public List<TradesWithPnlViewModel> tradesWithPnlVM = new List<TradesWithPnlViewModel>();
+    public List<CumulativePnlPositionViewModel> cumulativePnlPositionVM = new List<CumulativePnlPositionViewModel>();
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadTradesWithPnl();
+
+        await LoadCumulativePnlPos();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -75,17 +95,16 @@
         if (firstRender)
         {
             await ConfigureCharts();
-            StateHasChanged(); // Trigger a re-render after SetStock
+            StateHasChanged(); // Trigger a re-render after SetChart
         }
     }
-
 
     public async Task LoadMonthly()
     {
         monthlyResultVM = await resultService.GetMonthlyTestResults();
     }
 
-    private async Task SetStock(string canvasId, string onAnimationComplete, string chartType, object chartData)
+    private async Task SetChart(string canvasId, string onAnimationComplete, string chartType, object chartData)
     {
         await JS.InvokeVoidAsync("createChart", new
         {
@@ -98,46 +117,46 @@
 
     private async Task ConfigureCharts()
     {
-        var chartData1 = new
+        var CumPnlData = new
         {
-            labels = tradesWithPnlVM.Select(p => p.TradeId),
+            labels = cumulativePnlPositionVM.Select((p, index) => index + 1),
             datasets = new object[]
             {
                 new
                 {
                     borderColor = "#A0AAC1",
                     backgroundColor = "rgba(160, 170, 193, 0.2)",
-                    data = tradesWithPnlVM.Select(p => p.DollarPnl)
+                    data = cumulativePnlPositionVM.Select(p => p.CumulativeDollarPnl)
                 }
             }
         };
-        await SetStock("myChart1", "function", "bar", chartData1);
+        await SetChart("CumulativePnlPos", "function", "line", CumPnlData);
 
-
-
-        var chartData2 = new
-        {
-            labels = tradesWithPnlVM.Select(p => p.TradeId),
-            datasets = new object[]
-            {
-                new
-                {
-                    borderColor = "#A0AAC1",
-                    backgroundColor = "rgba(160, 170, 193, 0.2)",
-                    data = tradesWithPnlVM.Select(p => p.PercentPnl)
-                }
-            }
-        };
-        await SetStock("myChart2", "function", "line", chartData2);
+        // var chartData2 = new
+        // {
+        //     labels = cumulativePnlPositionVM.Select((p, index) => index + 1),
+        //     datasets = new object[]
+        //     {
+        //         new
+        //         {
+        //             borderColor = "#A0AAC1",
+        //             backgroundColor = "rgba(160, 170, 193, 0.2)",
+        //             data = cumulativePnlPositionVM.Select(p => p.CumulativeDollarPnl)
+        //         }
+        //     }
+        // };
+        // await SetStock("myChart2", "function", "line", chartData2);
     }
 
-
-
-    private async Task LoadTradesWithPnl()
+    private async Task LoadCumulativePnlPos()
     {
-        tradesWithPnlVM = await tradeService.GetTradesWithPnl();
+        cumulativePnlPositionVM = await tradeService.GetCumulativePnl();
         StateHasChanged();
     }
 
+    public string GetColor(decimal? value)
+    {
+        return value >= 0 ? "green" : "red";
+    }
 
 }

@@ -1,0 +1,126 @@
+﻿@page "/positions"
+@using Data.ViewModels
+@using Services
+@using Services.Interfaces
+@inject ITradeService tradeService
+
+<style>
+    .tableRound {
+        border-radius: 10px;
+        padding: 10px;
+        width: 75%;
+        background-color: #EAECF1;
+        text-align: center;
+    }
+</style>
+
+
+
+    <table class="table table-hover table-striped tableRound">
+        <thead>
+            <tr>
+                <th>Trade Id</th>
+                <th>Symbol</th>
+                <th>Posn %</th>
+                <th>Qty</th>
+                <th>Cost Basis</th>
+                <th>Stop Loss</th>
+                <th>Risk</th>
+                <th>1R</th>
+                <th>2R</th>
+                <th>3R</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in positionsVM)
+            {
+                <tr>
+                    <td>@p.TradeId</td>
+                    <td class="fw-bold">@p.StockSymbol</td>
+                    <td>@p.PositionSize.ToString("P")</td>
+                    <td>@p.Quantity</td>
+                    <td>@p.CostBasis.ToString("C")</td>
+                    <td>@p.StopLoss.ToString("C")</td>
+                    <td>@p.Risk.ToString("C")</td>
+                    <td>@p.OneRisk.ToString("C")</td>
+                    <td>@p.TwoRisk.ToString("C")</td>
+                    <td>@p.ThreeRisk</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+@if (tradesWithPnlVM.Any())
+{
+
+
+
+    <table class="table table-hover table-striped tableRound">
+        <thead>
+            <tr>
+                <th>Trade Id</th>
+                <th>Symbol</th>
+                <th>Cost Basis</th>
+                <th>Sell Basis</th>
+                <th>$ P/L</th>
+                <th>% P/L</th>
+                <th>Hold Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var t in tradesWithPnlVM)
+            {
+                <tr>
+                    <td>@t.TradeId</td>
+                    <td class="fw-bold">@t.StockSymbol</td>
+                    <td>@t.CostBasis?.ToString("C")</td>
+                    <td>@t.SellBasis?.ToString("C")</td>
+                    <td class="fw-bold" style="color: @GetColor(t.DollarPnl)">@t.DollarPnl?.ToString("C")</td>
+                    <td class="fw-bold" style="color: @GetColor(t.PercentPnl)">@t.PercentPnl?.ToString("P")</td>
+                    <td>@t.HoldTime</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+
+
+@code {
+    public List<TradesWithPnlViewModel> tradesWithPnlVM = new List<TradesWithPnlViewModel>();
+
+    public List<PositionsViewModel> positionsVM = new List<PositionsViewModel>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadTradesWithPnl();
+            await LoadPositions();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPositions();
+    }
+
+    private async Task LoadTradesWithPnl()
+    {
+        tradesWithPnlVM = await tradeService.GetTradesWithPnl();
+        StateHasChanged();
+    }
+
+    private async Task LoadPositions()
+    {
+        positionsVM = await tradeService.GetPositions();
+    }
+
+    public string GetColor(decimal? value)
+    {
+        return value >= 0 ? "green" : "red";
+    }
+}
+

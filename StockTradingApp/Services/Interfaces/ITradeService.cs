@@ -23,5 +23,9 @@ namespace StockTradingApp.Services.Interfaces
 
         Task<List<TradesWithPnlViewModel>> GetTradesWithPnl();
 
+        Task<List<CumulativePnlPositionViewModel>> GetCumulativePnl();
+
+        Task<List<PositionsViewModel>> GetPositions();
+
     }
 }
