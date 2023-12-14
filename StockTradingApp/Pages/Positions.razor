@@ -12,14 +12,44 @@
         background-color: #EAECF1;
         text-align: center;
     }
+
+    .tableClosed {
+        border-radius: 10px;
+        padding: 10px;
+        width: 60%;
+        background-color: #EAECF1;
+        text-align: center;
+        margin: auto;
+    }
+
+    .closed-trades {
+        width: 70%;
+    }
+
+    .positionPage {
+        width: 80%;
+    }
+
+    .header-titles {
+        color: white;
+        text-align: center;
+        width: 75%;
+    }
+
+    .title {
+        color: white;
+        text-align: center;
+    }
 </style>
 
 
-
+@if(positionsVM.Any() || recentlyClosedTradesVM.Any())
+{
+<div class="positionPage ">
+    <h2 class="header-titles">Open Positions</h2>
     <table class="table table-hover table-striped tableRound">
         <thead>
             <tr>
-                <th>Trade Id</th>
                 <th>Symbol</th>
                 <th>Posn %</th>
                 <th>Qty</th>
@@ -35,61 +65,59 @@
             @foreach (var p in positionsVM)
             {
                 <tr>
-                    <td>@p.TradeId</td>
                     <td class="fw-bold">@p.StockSymbol</td>
                     <td>@p.PositionSize.ToString("P")</td>
                     <td>@p.Quantity</td>
                     <td>@p.CostBasis.ToString("C")</td>
                     <td>@p.StopLoss.ToString("C")</td>
-                    <td>@p.Risk.ToString("C")</td>
-                    <td>@p.OneRisk.ToString("C")</td>
-                    <td>@p.TwoRisk.ToString("C")</td>
-                    <td>@p.ThreeRisk</td>
+                    <td class="fw-bold" style="color: #D96658"> @p.Risk.ToString("C")</td>
+                    <td class="fw-bold" style="color: #B9990C">@p.OneRisk.ToString("C")</td>
+                    <td class="fw-bold" style="color: #B9990C">@p.TwoRisk.ToString("C")</td>
+                    <td class="fw-bold" style="color: #B9990C">@p.ThreeRisk.ToString("C")</td>
                 </tr>
             }
         </tbody>
     </table>
-
-
-@if (tradesWithPnlVM.Any())
-{
-
-
-
-    <table class="table table-hover table-striped tableRound">
-        <thead>
-            <tr>
-                <th>Trade Id</th>
-                <th>Symbol</th>
-                <th>Cost Basis</th>
-                <th>Sell Basis</th>
-                <th>$ P/L</th>
-                <th>% P/L</th>
-                <th>Hold Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var t in tradesWithPnlVM)
-            {
+    <div class="closed-trades">
+        <h2 class="title">Recent Trades</h2>
+        <table class="table table-hover table-striped tableClosed">
+            <thead>
                 <tr>
-                    <td>@t.TradeId</td>
-                    <td class="fw-bold">@t.StockSymbol</td>
-                    <td>@t.CostBasis?.ToString("C")</td>
-                    <td>@t.SellBasis?.ToString("C")</td>
-                    <td class="fw-bold" style="color: @GetColor(t.DollarPnl)">@t.DollarPnl?.ToString("C")</td>
-                    <td class="fw-bold" style="color: @GetColor(t.PercentPnl)">@t.PercentPnl?.ToString("P")</td>
-                    <td>@t.HoldTime</td>
+                    <th>Symbol</th>
+                    <th>Buy Date</th>
+                    <th>$ P/L</th>
+                    <th>% P/L</th>
+                    <th>NAV</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var r in recentlyClosedTradesVM)
+                {
+                    <tr>
+                        <td class="fw-bold">@r.StockSymbol</td>
+                        <td>@r.BuyDate?.ToString("MM/dd/yy")</td>
+                        <td class="fw-bold" style="color: @GetColor(r.DollarPnl)">@r.DollarPnl?.ToString("C")</td>
+                        <td class="fw-bold" style="color: @GetColor(r.PercentPnl)">@r.PercentPnl?.ToString("P")</td>
+                        <td class="fw-bold" style="color: @GetColor(r.DollarPnl)">@r.Nav?.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+}
+else
+{
+    <div class="text-center">
+        <img src="/images/infinityLoading.gif">
+    </div>
 }
 
 
-
-
 @code {
-    public List<TradesWithPnlViewModel> tradesWithPnlVM = new List<TradesWithPnlViewModel>();
+    public List<RecentlyClosedTradesViewModel> recentlyClosedTradesVM = new List<RecentlyClosedTradesViewModel>();
+
+    // public List<TradesWithPnlViewModel> tradesWithPnlVM = new List<TradesWithPnlViewModel>();
 
     public List<PositionsViewModel> positionsVM = new List<PositionsViewModel>();
 
@@ -97,25 +125,21 @@
     {
         if (firstRender)
         {
-            await LoadTradesWithPnl();
+            await LoadRecentlyClosed();
             await LoadPositions();
         }
     }
 
-    protected override async Task OnInitializedAsync()
+    private async Task LoadRecentlyClosed()
     {
-        await LoadPositions();
-    }
-
-    private async Task LoadTradesWithPnl()
-    {
-        tradesWithPnlVM = await tradeService.GetTradesWithPnl();
+        recentlyClosedTradesVM = await tradeService.GetRecentlyClosed();
         StateHasChanged();
     }
 
     private async Task LoadPositions()
     {
         positionsVM = await tradeService.GetPositions();
+        StateHasChanged();
     }
 
     public string GetColor(decimal? value)

@@ -99,7 +99,16 @@ namespace StockTradingApp
         public async Task<List<PositionsViewModel>> GetPositions()
         {
             var getPositions = "EXEC sp_getPositions";
-            return _dbContext.PositionsViewModel.FromSqlRaw(getPositions).ToList();
+            var positions = _dbContext.PositionsViewModel.FromSqlRaw(getPositions).ToList();
+            var orderedByPos = positions.OrderByDescending(trade => trade.PositionSize).ToList();
+            return orderedByPos;
+
+        }
+
+        public async Task<List<RecentlyClosedTradesViewModel>> GetRecentlyClosed()
+        {
+            var getRecentlyClosed = "EXEC sp_getRecentlyClosed";
+            return _dbContext.RecentlyClosedTradeViewModel.FromSqlRaw(getRecentlyClosed).ToList();
         }
 
     }

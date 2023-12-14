@@ -27,5 +27,6 @@ namespace StockTradingApp.Services.Interfaces
 
         Task<List<PositionsViewModel>> GetPositions();
 
+        Task<List<RecentlyClosedTradesViewModel>> GetRecentlyClosed();
     }
 }

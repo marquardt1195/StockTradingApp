@@ -34,6 +34,8 @@ namespace StockTradingApp.Data
 
         public DbSet<PositionsViewModel> PositionsViewModel { get; set; }
 
+        public DbSet<RecentlyClosedTradesViewModel> RecentlyClosedTradeViewModel { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

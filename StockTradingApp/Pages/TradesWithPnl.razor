@@ -2,6 +2,7 @@
 @using Data.ViewModels
 @using Services
 @using Services.Interfaces
+@using StockTradingApp.Pages.Components
 @inject ITradeService tradeService
 
 <style>
@@ -14,10 +15,10 @@
     }
 </style>
 
-
 <button>Calculated Data</button>
 <button>Raw Data</button>
 <br/>
+<SearchTradeComponent OnSearchTrade="OnTradeSearch"></SearchTradeComponent>
 <br/>
 
 @if (tradesWithPnlVM.Any())
@@ -42,8 +43,8 @@
                 <td class="fw-bold">@t.StockSymbol</td>
                 <td>@t.CostBasis?.ToString("C")</td>
                 <td>@t.SellBasis?.ToString("C")</td>
-                    <td class="fw-bold" style="color: @GetColor(t.DollarPnl)">@t.DollarPnl?.ToString("C")</td>
-                    <td class="fw-bold" style="color: @GetColor(t.PercentPnl)">@t.PercentPnl?.ToString("P")</td>
+                <td class="fw-bold" style="color: @GetColor(t.DollarPnl)">@t.DollarPnl?.ToString("C")</td>
+                <td class="fw-bold" style="color: @GetColor(t.PercentPnl)">@t.PercentPnl?.ToString("P")</td>
                 <td>@t.HoldTime</td>
             </tr>
         }
@@ -60,6 +61,13 @@ else
 
 @code {
     public List<TradesWithPnlViewModel> tradesWithPnlVM = new List<TradesWithPnlViewModel>();
+
+    private string searchTerm = string.Empty;
+
+    private void OnTradeSearch(string searchTerm)
+    {
+        this.searchTerm = searchTerm;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
