@@ -76,7 +76,7 @@
                         <td>@trans.Count()</td>
                         <td>@(trans.Last().EntryPrice.HasValue ? trans.Last().EntryPrice.Value.ToString("C") : string.Empty)</td>
                         <td>@trans.Sum(trans => trans.NumberSharesEntered)</td>
-                        <td>@(trans.First().EntryDate.HasValue ? trans.First().EntryDate.Value.ToString("MM/dd/yy") : string.Empty)</td>
+                        <td>@(trans.First().EntryDate.HasValue ? trans.First().EntryDate.Value.ToString("MM/dd/yy") : trans.Last().EntryDate.Value.ToString("MM/dd/yy"))</td>
                         <td>@(trans.Last().SellPrice.HasValue ? trans.Last().SellPrice.Value.ToString("C") : string.Empty)</td>
                         <td>@trans.Sum(trans => trans.NumberSharesExited)</td>
                         <td>@(trans.First().ExitDate.HasValue ? trans.First().ExitDate.Value.ToString("MM/dd/yy") : string.Empty)</td>
@@ -110,6 +110,7 @@
                                     <th>Entry Price</th>
                                     <th># Shares Entered</th>
                                     <th>Entry Date</th>
+                                    <th>Stop Loss</th>
                                     <th>Exit Price</th>
                                     <th># Shares Exited</th>
                                     <th>Exit Date</th>
@@ -126,6 +127,7 @@
                                         <td>@trans.EntryPrice</td>
                                         <td>@trans.NumberSharesEntered</td>
                                         <td>@trans.EntryDate</td>
+                                        <td>@trans.DollarStopLoss</td>
                                         <td>@trans.SellPrice</td>
                                         <td>@trans.NumberSharesExited</td>
                                         <td>@trans.ExitDate</td>
@@ -165,39 +167,39 @@ else
                         <DataAnnotationsValidator></DataAnnotationsValidator>
                         <ValidationSummary></ValidationSummary>
                         <div class="form-group">
-                            <label for="TradeId">Trade Id</label>
+                            <label for="TradeId" class="fw-bold">Trade Id</label>
                             <InputNumber class="form-control" @bind-Value="transaction.TradeId" readonly="true"></InputNumber>
                         </div>
                         <div class="form-group">
-                            <label for="StockSymbol">Stock Symbol</label>
+                            <label for="StockSymbol" class="fw-bold">Symbol</label>
                             <InputText class="form-control" @bind-Value="transaction.StockSymbol"></InputText>
                         </div>
                         <div class="form-group">
-                            <label for="EntryPrice">Entry Price</label>
+                            <label for="EntryPrice" class="fw-bold">Buy Price</label>
                             <InputNumber class="form-control" @bind-Value="transaction.EntryPrice"></InputNumber>
                         </div>
                         <div class="form-group">
-                            <label for="NumberSharesEntered">Number Shares Entered</label>
+                            <label for="NumberSharesEntered" class="fw-bold">Buy Qty</label>
                             <InputNumber class="form-control" @bind-Value="transaction.NumberSharesEntered"></InputNumber>
                         </div>
                         <div class="form-group">
-                            <label for="EntryDate">Entry Date</label>
+                            <label for="EntryDate" class="fw-bold">Buy Date</label>
                             <InputDate class="form-control" @bind-Value="transaction.EntryDate"></InputDate>
                         </div>
-@*                         <div class="form-group">
-                            <label for="DollarStopLoss">Stop Loss</label>
-                            <InputNumber class="form-control" @bind-Value="transaction.DollarStopLoss"></InputNumber>
-                        </div> *@
                         <div class="form-group">
-                            <label for="SellPrice">Exit Price</label>
+                            <label for="DollarStopLoss" class="fw-bold">Stop Loss</label>
+                            <InputNumber class="form-control" @bind-Value="transaction.DollarStopLoss"></InputNumber>
+                        </div>  
+                        <div class="form-group">
+                            <label for="SellPrice" class="fw-bold">Sell Price</label>
                             <InputNumber class="form-control" @bind-Value="transaction.SellPrice"></InputNumber>
                         </div>
                         <div class="form-group">
-                            <label for="NumberSharesExited">Number Shares Exited</label>
+                            <label for="NumberSharesExited" class="fw-bold">Sell Qty</label>
                             <InputNumber class="form-control" @bind-Value="transaction.NumberSharesExited"></InputNumber>
                         </div>
                         <div class="form-group">
-                            <label for="ExitDate">Exit Date</label>
+                            <label for="ExitDate" class="fw-bold">Sell Date</label>
                             <InputDate class="form-control" @bind-Value="transaction.ExitDate"></InputDate>
                         </div><br />
                         <button type="submit" class="btn-primary btn-sm">Update</button>
@@ -221,7 +223,7 @@ else
                     <p>This will permanently delete this transaction for <b>Trade @transaction.TradeId</b></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" @onclick="()=>OnDeleteTransaction(transaction.TransactionId, transaction.TradeId)">Yes, I'm sure</button>
+                    <button type="button" class="btn btn-danger" @onclick="()=>OnDeleteTransaction(transaction.TransactionId)">Yes, I'm sure</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseDeleteModal">Go Back</button>
                 </div>
             </div>
@@ -265,15 +267,8 @@ else
     {
         if (firstRender)
         {
-            LoadTransactions();
+            await LoadTransactions();
         }
-    }
-
-    private async Task LoadTrades()
-    {
-        tradeList = await tradeService.GetAllTrades();
-        isLoading = false;
-        StateHasChanged();
     }
 
     private async Task LoadTransactions()
@@ -288,21 +283,14 @@ else
         trade = new Trade();
     }
 
-    private async void OnDeleteTransaction(int transactionId, int pTradeId)
+    private async void OnDeleteTransaction(int transactionId)
     {
         transactionService.DeleteTransaction(transactionId);
-        transactionList = await transactionService.GetTransactionByTradeId(pTradeId);
-        NavigationManager.NavigateTo($"/transactform/{pTradeId}");
         ShowDeleteModal = false;
+        ShowEditTransactionModal = false;
+        await LoadTransactions();
     }
 
-    // private async void OnDeleteTrade(int tradeId)
-    // {
-    //     tradeService.DeleteTrade(tradeId);
-    //     tradeList = await tradeService.GetAllTrades();
-    //     StateHasChanged();
-    //     await LoadTransactions();
-    // }
 
     private void OnEdit(int pTradeId, int pTransactionId)
     {
@@ -348,10 +336,10 @@ else
     }
 
 
-    private void NewTrade()
-    {
-        trade = new Trade();
-    }
+    // private void NewTrade()
+    // {
+    //     trade = new Trade();
+    // }
 
     private void OnAddTransaction(int pTradeId, string pStockSymbol)
     {

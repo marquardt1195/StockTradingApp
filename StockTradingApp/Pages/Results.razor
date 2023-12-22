@@ -3,7 +3,6 @@
 @using Services;
 @using StockTradingApp.Services.Interfaces;
 @inject IResultService resultService
-@inject ITradeService tradeService
 
 <style>
     .table-km {
@@ -34,7 +33,6 @@
     }
 </style>
 
-<h3 class="main-text">Results</h3>
 
 @if (isLoaded)
 {
@@ -52,11 +50,11 @@
         <tbody>
             <tr>
 
-                <td class="fw-bold" style="color: @GetColor(keyMetricsVM.Avg_percent_gain)">@keyMetricsVM.Avg_percent_gain.ToString("P")</td>
-                <td class="fw-bold" style="color: @GetColor(keyMetricsVM.Avg_percent_loss)">@keyMetricsVM.Avg_percent_loss.ToString("P")</td>
-                <td>@keyMetricsVM.Batting_avg.ToString("P")</td>
-                <td>@keyMetricsVM.Win_loss_ratio</td>
-                <td>@keyMetricsVM.Adj_win_loss</td>
+                <td class="fw-bold" style="color: @GetColor(keyMetricsVM.Avg_percent_gain)">@(keyMetricsVM.Avg_percent_gain.HasValue ? keyMetricsVM.Avg_percent_gain.Value.ToString("P") : "NA")</td>
+                <td class="fw-bold" style="color: @GetColor(keyMetricsVM.Avg_percent_loss)">@(keyMetricsVM.Avg_percent_loss.HasValue ? keyMetricsVM.Avg_percent_loss.Value.ToString("P") : "NA")</td>
+                <td>@(keyMetricsVM.Batting_avg.HasValue ? keyMetricsVM.Batting_avg.Value.ToString("P") : "NA")</td>
+                <td>@(keyMetricsVM.Win_loss_ratio.HasValue ? keyMetricsVM.Win_loss_ratio.Value : "NA")</td>
+                <td>@(keyMetricsVM.Adj_win_loss.HasValue ? keyMetricsVM.Adj_win_loss.Value : "NA")</td>
             </tr>
         </tbody>
     </table>
@@ -85,10 +83,10 @@
                 <td>@netResultVM.Num_wins</td>
                 <td>@netResultVM.Num_losses</td>
                 <td>@netResultVM.Total_trades</td>
-                <td>@netResultVM.Lg_win.ToString("P")</td>
-                <td>@netResultVM.Lg_loss.ToString("P")</td>
-                <td>@netResultVM.Win_hold</td>
-                <td>@netResultVM.Loss_hold</td>
+                <td>@(netResultVM.Lg_win.HasValue ? netResultVM.Lg_win.Value.ToString("P") : "NA")</td>
+                <td>@(netResultVM.Lg_loss.HasValue ? netResultVM.Lg_loss.Value.ToString("P") : "NA")</td>
+                <td>@(netResultVM.Win_hold.HasValue ? netResultVM.Win_hold.Value : "NA")</td>
+                <td>@(netResultVM.Loss_hold.HasValue ? netResultVM.Loss_hold.Value : "NA")</td>
             </tr>
         </tbody>
     </table>
@@ -155,6 +153,7 @@ else
         if (firstRender)
         {
             await LoadResults();
+            //await LoadNetResults();
             StateHasChanged();
         }
     }
@@ -168,9 +167,18 @@ else
         StateHasChanged();
     }
 
+    // public async Task LoadNetResults()
+    // {
+    //     netResultVM = await resultService.GetNetResults();
+    //     monthlyResultVM = await resultService.GetMonthlyResults();
+    //     isLoaded = true;
+    //     StateHasChanged();
+
+    // }
+
     public string GetColor(decimal? value)
     {
-        return value >= 0 ? "green" : "red";
+        return value >= 0  ? "green" : "red";
     }
 
 }

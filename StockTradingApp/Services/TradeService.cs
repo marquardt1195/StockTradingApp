@@ -32,7 +32,7 @@ namespace StockTradingApp
 
         public async Task<List<Trade>> GetAllExistingTrades()
         {
-            return _dbContext.Trades.OrderByDescending(trade => trade.TradeId).ToList();
+            return await _dbContext.Trades.OrderByDescending(trade => trade.TradeId).ToListAsync();
         }
 
         public void AddTrade(Trade trade)
@@ -49,6 +49,14 @@ namespace StockTradingApp
         public List<Trade> GetTradeBySymbol(string pStockSymbol)
         {
             return _dbContext.Trades.Where(x => x.StockSymbol.Contains(pStockSymbol)).ToList();
+        }
+
+        public async Task<List<TradesWithPnlViewModel>> GetTradeWithPnlBySymbol(string pStockSymbol)
+        {
+            var getTradesWithPnl = "EXEC sp_getTradesWithPnl";
+            var tradesWithPnl = _dbContext.TradesWithPnlViewModel.FromSqlRaw(getTradesWithPnl).ToList();
+            var filteredTrades = tradesWithPnl.Where(x => x.StockSymbol != null && x.StockSymbol.ToLower().Contains(pStockSymbol.ToLower())).ToList();
+            return filteredTrades;
         }
 
         public void DeleteTrade(int TradeId)
@@ -109,6 +117,7 @@ namespace StockTradingApp
         {
             var getRecentlyClosed = "EXEC sp_getRecentlyClosed";
             return _dbContext.RecentlyClosedTradeViewModel.FromSqlRaw(getRecentlyClosed).ToList();
+
         }
 
     }

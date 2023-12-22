@@ -17,6 +17,8 @@ namespace StockTradingApp.Services.Interfaces
 
         List<Trade> GetTradeBySymbol(string pStockSymbol);
 
+        Task<List<TradesWithPnlViewModel>> GetTradeWithPnlBySymbol(string pStockSymbol);
+
         Task<List<Trade>> GetAllExistingTrades();
 
         int RemoveRecentTrade();

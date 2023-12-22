@@ -59,14 +59,14 @@ namespace StockTradingApp.Services
             existingTransaction.ExitDate = updatedTransaction.ExitDate;
         }
 
-       // public Task<IEnumerable<TradeViewModel>> TradeTransactionCalculations(int tradeId)
-       // {
-       //     var transactions = GetTransactionByTradeId(tradeId);
-       //
-       //     var tradeViewModels = transactions
-       //
-       //
-       // }
+        // public Task<IEnumerable<TradeViewModel>> TradeTransactionCalculations(int tradeId)
+        // {
+        //     var transactions = GetTransactionByTradeId(tradeId);
+        //
+        //     var tradeViewModels = transactions
+        //
+        //
+        // }
     }
 }
 

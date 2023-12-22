@@ -1,8 +1,9 @@
-﻿@page "/calculatedtrades"
+﻿@page "/results/trades"
 @using Data.ViewModels
 @using Services
 @using Services.Interfaces
 @using StockTradingApp.Pages.Components
+@inject NavigationManager NavigationMan
 @inject ITradeService tradeService
 
 <style>
@@ -15,9 +16,6 @@
     }
 </style>
 
-<button>Calculated Data</button>
-<button>Raw Data</button>
-<br/>
 <SearchTradeComponent OnSearchTrade="OnTradeSearch"></SearchTradeComponent>
 <br/>
 
@@ -64,23 +62,31 @@ else
 
     private string searchTerm = string.Empty;
 
-    private void OnTradeSearch(string searchTerm)
+    private async Task OnTradeSearch(string searchTerm)
     {
         this.searchTerm = searchTerm;
+        await LoadTradesWithPnlBySymbol(searchTerm);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if(firstRender)
         {
-            await LoadTradesWithPnl();
+            await LoadTradesWithPnlBySymbol(searchTerm);
         }
     }
 
-
-    private async Task LoadTradesWithPnl()
+    private async Task LoadTradesWithPnlBySymbol(string searchTerm)
     {
-        tradesWithPnlVM = await tradeService.GetTradesWithPnl();
+        this.searchTerm = searchTerm;
+        if (string.IsNullOrEmpty(searchTerm))
+        {
+            tradesWithPnlVM = await tradeService.GetTradesWithPnl();
+        }
+        else
+        {
+            tradesWithPnlVM = await tradeService.GetTradeWithPnlBySymbol(searchTerm);
+        }
         StateHasChanged();
     }
 

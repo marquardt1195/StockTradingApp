@@ -14,12 +14,12 @@ namespace StockTradingApp.Data.ViewModels
 
         public int Total_trades {  get; set; }
 
-        public decimal Lg_win { get; set; }
+        public decimal? Lg_win { get; set; }
 
-        public decimal Lg_loss { get; set; }
+        public decimal? Lg_loss { get; set; }
 
-        public int Win_hold { get; set; }
+        public int? Win_hold { get; set; }
 
-        public int Loss_hold { get; set; }
+        public int? Loss_hold { get; set; }
     }
 }

@@ -54,7 +54,8 @@
                 <th>Posn %</th>
                 <th>Qty</th>
                 <th>Cost Basis</th>
-                <th>Stop Loss</th>
+                <th>$ Stop</th>
+                <th>% Stop</th>
                 <th>Risk</th>
                 <th>1R</th>
                 <th>2R</th>
@@ -69,13 +70,26 @@
                     <td>@p.PositionSize.ToString("P")</td>
                     <td>@p.Quantity</td>
                     <td>@p.CostBasis.ToString("C")</td>
-                    <td>@p.StopLoss.ToString("C")</td>
+                    <td>@p.DollarStopLoss.ToString("C")</td>
+                    <td>@p.PercentStopLoss.ToString("P")</td>
                     <td class="fw-bold" style="color: #D96658"> @p.Risk.ToString("C")</td>
                     <td class="fw-bold" style="color: #B9990C">@p.OneRisk.ToString("C")</td>
                     <td class="fw-bold" style="color: #B9990C">@p.TwoRisk.ToString("C")</td>
                     <td class="fw-bold" style="color: #B9990C">@p.ThreeRisk.ToString("C")</td>
                 </tr>
             }
+            <tr>
+                <td class="fw-bold">Total</td>
+                <td class ="fw-bold">@positionsVM.Sum(p => p.PositionSize).ToString("P")</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="fw-bold">@positionsVM.Average(p => p.PercentStopLoss).ToString("P")</td>
+                <td class="fw-bold">@positionsVM.Sum(p => p.Risk).ToString("C")</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
         </tbody>
     </table>
     <div class="closed-trades">
@@ -98,7 +112,7 @@
                         <td>@r.BuyDate?.ToString("MM/dd/yy")</td>
                         <td class="fw-bold" style="color: @GetColor(r.DollarPnl)">@r.DollarPnl?.ToString("C")</td>
                         <td class="fw-bold" style="color: @GetColor(r.PercentPnl)">@r.PercentPnl?.ToString("P")</td>
-                        <td class="fw-bold" style="color: @GetColor(r.DollarPnl)">@r.Nav?.ToString("C")</td>
+                        <td class="fw-bold">@r.Nav?.ToString("C")</td>
                     </tr>
                 }
             </tbody>
@@ -125,8 +139,8 @@ else
     {
         if (firstRender)
         {
-            await LoadRecentlyClosed();
             await LoadPositions();
+            await LoadRecentlyClosed();     
         }
     }
 

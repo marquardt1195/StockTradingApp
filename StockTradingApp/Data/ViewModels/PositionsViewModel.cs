@@ -15,7 +15,9 @@ namespace StockTradingApp.Data.ViewModels
 
         public decimal CostBasis { get; set; }
 
-        public decimal StopLoss { get; set; }
+        public decimal DollarStopLoss { get; set; }
+
+        public decimal PercentStopLoss { get; set; }
 
         public decimal Risk { get; set; }
 
