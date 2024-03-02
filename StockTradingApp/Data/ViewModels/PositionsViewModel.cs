@@ -26,5 +26,7 @@ namespace StockTradingApp.Data.ViewModels
         public decimal TwoRisk { get; set; }
 
         public decimal ThreeRisk { get; set; }
+
+        public decimal PnlRealized { get; set; }
     }
 }

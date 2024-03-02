@@ -27,19 +27,24 @@
                 </li>
                 <li class="nav-item dropdown" @onclick:preventDefault="true" @onclick="@(() => OnClickMenu("dropdown-1"))">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Results
+                        Analytics
                     </a>
                     @if (expandSubNav1)
                     {
                         <ul class="dropdown-menu show" aria-labelledby="navbarDropdown">
                             <li class="nav-item" @onclick:stopPropagation="true" @onclick="@(() => OnClickMenu("nav-item"))">
+                                <NavLink class="dropdown-item" href="results">
+                                    <span class="oi oi-bar-chart" aria-hidden="true"></span> Results
+                                </NavLink>
+                            </li>
+                            <li class="nav-item" @onclick:stopPropagation="true" @onclick="@(() => OnClickMenu("nav-item"))">
                                 <NavLink class="dropdown-item" href="results/plots">
-                                    <span class="oi oi-file " aria-hidden="true"></span> Plots
+                                    <span class="oi oi-bar-chart" aria-hidden="true"></span> Plots
                                 </NavLink>
                             </li>
                             <li class="nav-item" @onclick:stopPropagation="true" @onclick="@(() => OnClickMenu("nav-item"))">
                                 <NavLink class="dropdown-item" href="results/trades">
-                                    <span class="oi oi-file " aria-hidden="true"></span> Trades
+                                    <span class="oi oi-list " aria-hidden="true"></span> Trades
                                 </NavLink>
                             </li>
                         </ul>

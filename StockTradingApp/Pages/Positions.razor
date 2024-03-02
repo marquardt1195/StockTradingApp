@@ -45,7 +45,7 @@
 
 @if(positionsVM.Any() || recentlyClosedTradesVM.Any())
 {
-<div class="positionPage ">
+<div class="positionPage" style="font-size: large;">
     <h2 class="header-titles">Open Positions</h2>
     <table class="table table-hover table-striped tableRound">
         <thead>
@@ -56,10 +56,11 @@
                 <th>Cost Basis</th>
                 <th>$ Stop</th>
                 <th>% Stop</th>
-                <th>Risk</th>
+                <th>Risk<span style="font-size:large;" >*</span></th>
                 <th>1R</th>
                 <th>2R</th>
                 <th>3R</th>
+                <th>pPnL</th>
             </tr>
         </thead>
         <tbody>
@@ -76,6 +77,7 @@
                     <td class="fw-bold" style="color: #B9990C">@p.OneRisk.ToString("C")</td>
                     <td class="fw-bold" style="color: #B9990C">@p.TwoRisk.ToString("C")</td>
                     <td class="fw-bold" style="color: #B9990C">@p.ThreeRisk.ToString("C")</td>
+                    <td>@p.PnlRealized.ToString("C")</td>
                 </tr>
             }
             <tr>
@@ -85,15 +87,18 @@
                 <td></td>
                 <td></td>
                 <td class="fw-bold">@positionsVM.Average(p => p.PercentStopLoss).ToString("P")</td>
-                <td class="fw-bold">@positionsVM.Sum(p => p.Risk).ToString("C")</td>
+                    <td class="fw-bold" style="color: #D96658">@positionsVM.Sum(p => p.Risk).ToString("C")</td>
                 <td></td>
                 <td></td>
                 <td></td>
+                <td class="fw-bold">@positionsVM.Sum(p=> p.PnlRealized).ToString("C")</td>
             </tr>
         </tbody>
     </table>
+        <div class="mb-1" style="color: white;"><span style="font-size:larger;">* </span>Risk of remaining shares. If pPnL > Risk, no actual risk to capital.</div>
+
     <div class="closed-trades">
-        <h2 class="title">Recent Trades</h2>
+        <h2 class="title">Recently Closed</h2>
         <table class="table table-hover table-striped tableClosed">
             <thead>
                 <tr>
@@ -101,8 +106,8 @@
                     <th>Buy Date</th>
                     <th>$ P/L</th>
                     <th>% P/L</th>
-                    <th>NAV</th>
-                </tr>
+@*                     <th>NAV</th>
+ *@             </tr>
             </thead>
             <tbody>
                 @foreach (var r in recentlyClosedTradesVM)
@@ -112,8 +117,8 @@
                         <td>@r.BuyDate?.ToString("MM/dd/yy")</td>
                         <td class="fw-bold" style="color: @GetColor(r.DollarPnl)">@r.DollarPnl?.ToString("C")</td>
                         <td class="fw-bold" style="color: @GetColor(r.PercentPnl)">@r.PercentPnl?.ToString("P")</td>
-                        <td class="fw-bold">@r.Nav?.ToString("C")</td>
-                    </tr>
+@*                         <td class="fw-bold">@r.Nav?.ToString("C")</td>
+ *@                    </tr>
                 }
             </tbody>
         </table>

@@ -36,99 +36,100 @@
 
 @if (isLoaded)
 {
-    <h4 class="header-text">Key Metrics</h4>
-    <table class="table table-hover table-km">
-        <thead>
-            <tr>
-                <th>Avg % Gain</th>
-                <th>Avg % Loss</th>
-                <th>Batting Avg</th>
-                <th>W/L</th>
-                <th>Adj W/L</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-
-                <td class="fw-bold" style="color: @GetColor(keyMetricsVM.Avg_percent_gain)">@(keyMetricsVM.Avg_percent_gain.HasValue ? keyMetricsVM.Avg_percent_gain.Value.ToString("P") : "NA")</td>
-                <td class="fw-bold" style="color: @GetColor(keyMetricsVM.Avg_percent_loss)">@(keyMetricsVM.Avg_percent_loss.HasValue ? keyMetricsVM.Avg_percent_loss.Value.ToString("P") : "NA")</td>
-                <td>@(keyMetricsVM.Batting_avg.HasValue ? keyMetricsVM.Batting_avg.Value.ToString("P") : "NA")</td>
-                <td>@(keyMetricsVM.Win_loss_ratio.HasValue ? keyMetricsVM.Win_loss_ratio.Value : "NA")</td>
-                <td>@(keyMetricsVM.Adj_win_loss.HasValue ? keyMetricsVM.Adj_win_loss.Value : "NA")</td>
-            </tr>
-        </tbody>
-    </table>
-    <br />
-    <br />
-
-    <h4 class="header-text">Net</h4>
-    <table class="table table-hover table-net">
-        <thead>
-            <tr>
-                <th>P/L $</th>
-                <th>P/L %</th>
-                <th>Wins</th>
-                <th>Losses</th>
-                <th>Total Trades</th>
-                <th>LG % Gain</th>
-                <th>LG % Loss</th>
-                <th>Avg Win Hold</th>
-                <th>Avg Loss Hold</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="fw-bold" style="color: @GetColor(netResultVM.Pl_dollar)">@netResultVM.Pl_dollar.ToString("C")</td>
-                <td class="fw-bold" style="color: @GetColor(netResultVM.Pl_percent)">@netResultVM.Pl_percent.ToString("P")</td>
-                <td>@netResultVM.Num_wins</td>
-                <td>@netResultVM.Num_losses</td>
-                <td>@netResultVM.Total_trades</td>
-                <td>@(netResultVM.Lg_win.HasValue ? netResultVM.Lg_win.Value.ToString("P") : "NA")</td>
-                <td>@(netResultVM.Lg_loss.HasValue ? netResultVM.Lg_loss.Value.ToString("P") : "NA")</td>
-                <td>@(netResultVM.Win_hold.HasValue ? netResultVM.Win_hold.Value : "NA")</td>
-                <td>@(netResultVM.Loss_hold.HasValue ? netResultVM.Loss_hold.Value : "NA")</td>
-            </tr>
-        </tbody>
-    </table>
-    <br />
-    <br />
-
-
-    <h4 class="header-text">Monthly</h4>
-    <table class="table table-hover table-striped table-net">
-        <thead>
-            <tr>
-                <th>Month</th>
-                <th>P/L $</th>
-                <th>P/L %</th>
-                <th>Avg % Gain</th>
-                <th>Avg % Loss</th>
-                <th>Wins</th>
-                <th>Losses</th>
-                <th>Batting Avg</th>
-                <th>W/L</th>
-                <th>Adj W/L</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var result in monthlyResultVM)
-            {
+    <div style="font-size: large;">
+        <h4 class="header-text">Key Metrics</h4>
+        <table class="table table-hover table-km">
+            <thead>
                 <tr>
-                    <td>@result.Month_closed</td>
-                    <td class="fw-bold" style="color: @GetColor(result.Monthly_dollar_pl)">@result.Monthly_dollar_pl?.ToString("C")</td>
-                    <td class="fw-bold" style="color: @GetColor(result.Monthly_percent_pl)">@result.Monthly_percent_pl?.ToString("P")</td>
-                    <td>@result.Monthly_avg_percent_gain?.ToString("P")</td>
-                    <td>@result.Monthly_avg_percent_loss?.ToString("P")</td>
-                    <td>@result.Monthly_wins</td>
-                    <td>@result.Monthly_losses</td>
-                    <td>@result.Monthly_batting_avg?.ToString("P")</td>
-                    <td>@result.Monthly_winloss</td>
-                    <td>@result.Monthly_adj_winloss</td>
+                    <th>Avg % Gain</th>
+                    <th>Avg % Loss</th>
+                    <th>Batting Avg</th>
+                    <th>W/L</th>
+                    <th>Adj W/L</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <tr>
 
+                    <td class="fw-bold" style="color: @GetColor(keyMetricsVM.Avg_percent_gain)">@(keyMetricsVM.Avg_percent_gain.HasValue ? keyMetricsVM.Avg_percent_gain.Value.ToString("P") : "NA")</td>
+                    <td class="fw-bold" style="color: @GetColor(keyMetricsVM.Avg_percent_loss)">@(keyMetricsVM.Avg_percent_loss.HasValue ? keyMetricsVM.Avg_percent_loss.Value.ToString("P") : "NA")</td>
+                    <td>@(keyMetricsVM.Batting_avg.HasValue ? keyMetricsVM.Batting_avg.Value.ToString("P") : "NA")</td>
+                    <td>@(keyMetricsVM.Win_loss_ratio.HasValue ? keyMetricsVM.Win_loss_ratio.Value : "NA")</td>
+                    <td>@(keyMetricsVM.Adj_win_loss.HasValue ? keyMetricsVM.Adj_win_loss.Value : "NA")</td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        <br />
+
+        <h4 class="header-text">Net</h4>
+        <table class="table table-hover table-net">
+            <thead>
+                <tr>
+                    <th>P/L $</th>
+                    <th>P/L %</th>
+                    <th>Wins</th>
+                    <th>Losses</th>
+                    <th>Total Trades</th>
+                    <th>LG % Gain</th>
+                    <th>LG % Loss</th>
+                    <th>Avg Win Hold</th>
+                    <th>Avg Loss Hold</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="fw-bold" style="color: @GetColor(netResultVM.Pl_dollar)">@netResultVM.Pl_dollar.ToString("C")</td>
+                    <td class="fw-bold" style="color: @GetColor(netResultVM.Pl_percent)">@netResultVM.Pl_percent.ToString("P")</td>
+                    <td>@netResultVM.Num_wins</td>
+                    <td>@netResultVM.Num_losses</td>
+                    <td>@netResultVM.Total_trades</td>
+                    <td>@(netResultVM.Lg_win.HasValue ? netResultVM.Lg_win.Value.ToString("P") : "NA")</td>
+                    <td>@(netResultVM.Lg_loss.HasValue ? netResultVM.Lg_loss.Value.ToString("P") : "NA")</td>
+                    <td>@(netResultVM.Win_hold.HasValue ? netResultVM.Win_hold.Value : "NA")</td>
+                    <td>@(netResultVM.Loss_hold.HasValue ? netResultVM.Loss_hold.Value : "NA")</td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        <br />
+
+
+        <h4 class="header-text">Monthly</h4>
+        <table class="table table-hover table-striped table-net">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>P/L $</th>
+                    <th>P/L %</th>
+                    <th>Avg % Gain</th>
+                    <th>Avg % Loss</th>
+                    <th>Wins</th>
+                    <th>Losses</th>
+                    <th>Batting Avg</th>
+                    <th>W/L</th>
+                    <th>Adj W/L</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var result in monthlyResultVM)
+                {
+                    <tr>
+                        <td>@result.Month_closed</td>
+                        <td class="fw-bold" style="color: @GetColor(result.Monthly_dollar_pl)">@result.Monthly_dollar_pl?.ToString("C")</td>
+                        <td class="fw-bold" style="color: @GetColor(result.Monthly_percent_pl)">@result.Monthly_percent_pl?.ToString("P")</td>
+                        <td>@result.Monthly_avg_percent_gain?.ToString("P")</td>
+                        <td>@result.Monthly_avg_percent_loss?.ToString("P")</td>
+                        <td>@result.Monthly_wins</td>
+                        <td>@result.Monthly_losses</td>
+                        <td>@result.Monthly_batting_avg?.ToString("P")</td>
+                        <td>@result.Monthly_winloss</td>
+                        <td>@result.Monthly_adj_winloss</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 else
 {
@@ -178,7 +179,7 @@ else
 
     public string GetColor(decimal? value)
     {
-        return value >= 0  ? "green" : "red";
+        return value >= 0 ? "green" : "red";
     }
 
 }
