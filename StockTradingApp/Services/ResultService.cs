@@ -21,7 +21,9 @@ namespace StockTradingApp.Services
             //return await _dbContext.KeyMetrics.FromSqlRaw(key_metrics).SingleOrDefaultAsync();
             //return _dbContext.KeyMetrics.SingleOrDefault();
 
-            return _dbContext.KeyMetrics.FromSqlRaw(key_metrics).AsEnumerable().SingleOrDefault();
+            return _dbContext.KeyMetrics.FromSqlRaw(key_metrics)
+                .AsEnumerable()
+                .SingleOrDefault();
         }
 
         public async Task<NetResultViewModel> GetNetResults()

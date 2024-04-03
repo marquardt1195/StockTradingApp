@@ -4,6 +4,7 @@ using StockTradingApp.Data.ViewModels;
 using StockTradingApp.Pages;
 using StockTradingApp.Services.Interfaces;
 
+
 namespace StockTradingApp
 {
     public class TradeService : ITradeService
@@ -19,7 +20,6 @@ namespace StockTradingApp
         {
             var calculateCostBasis = "EXEC sp_getWeightAvg";
             return _dbContext.Trades.FromSqlRaw(calculateCostBasis).ToList();
-            //return _dbContext.Trades.OrderByDescending(trade => trade.TradeId).ToList();
         }
 
         public async Task<List<TradesWithPnlViewModel>> GetTradesWithPnl()

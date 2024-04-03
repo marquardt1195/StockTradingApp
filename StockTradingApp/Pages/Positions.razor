@@ -45,7 +45,7 @@
 
 @if(positionsVM.Any() || recentlyClosedTradesVM.Any())
 {
-<div class="positionPage" style="font-size: large;">
+<div style="font-size: large;">
     <h2 class="header-titles">Open Positions</h2>
     <table class="table table-hover table-striped tableRound">
         <thead>
@@ -95,7 +95,7 @@
             </tr>
         </tbody>
     </table>
-        <div class="mb-1" style="color: white;"><span style="font-size:larger;">* </span>Risk of remaining shares. If pPnL > Risk, no actual risk to capital.</div>
+    <div class="mb-2" style="color: white; font-size: smaller"><span >* </span>Risk of remaining shares. If pPnL > Risk, no risk to principal.</div>
 
     <div class="closed-trades">
         <h2 class="title">Recently Closed</h2>

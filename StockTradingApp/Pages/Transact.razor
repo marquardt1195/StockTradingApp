@@ -315,7 +315,7 @@ else
             transactionService.UpdateTransaction(transaction);
         }
         dbContext.SaveChanges();    //once SaveChanges, then transactionId incremented by 1. 0 before this point.
-        NavigationManager.NavigateTo($"/transactform");
+        NavigationManager.NavigateTo("/transactform");
         transactionList = await transactionService.GetTransactionByTradeId(pTradeId);
         StateHasChanged();
         await LoadTransactions();

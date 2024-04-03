@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockTradingApp", "StockTradingApp\StockTradingApp.csproj", "{9BE730AC-C254-4F97-A476-06D939C2DBE5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockTradingAppTests", "StockTradingAppTests\StockTradingAppTests.csproj", "{8C2B8DB6-B92B-4A9C-B25A-64C140E8E086}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{9BE730AC-C254-4F97-A476-06D939C2DBE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BE730AC-C254-4F97-A476-06D939C2DBE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BE730AC-C254-4F97-A476-06D939C2DBE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C2B8DB6-B92B-4A9C-B25A-64C140E8E086}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C2B8DB6-B92B-4A9C-B25A-64C140E8E086}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C2B8DB6-B92B-4A9C-B25A-64C140E8E086}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C2B8DB6-B92B-4A9C-B25A-64C140E8E086}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

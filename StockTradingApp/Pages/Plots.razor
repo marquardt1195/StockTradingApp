@@ -93,6 +93,8 @@
 
     public List<RecentlyClosedTradesViewModel> recentlyClosedTradesVM = new List<RecentlyClosedTradesViewModel>();
 
+    public List<TradesWithPnlViewModel> tradesWithPnLVM = new List<TradesWithPnlViewModel>();
+
     protected override async Task OnInitializedAsync()
     {
 
@@ -126,31 +128,52 @@
 
     private async Task ConfigureCharts()
     {
+        var cumLabels = cumulativePnlPositionVM.Select(x => x.ShareBuyDate.ToString("M"));
+
         var CumPnlData = new
         {
-            labels = cumulativePnlPositionVM.Select((p, index) => index + 1),
+            labels = cumLabels,
             datasets = new object[]
             {
                 new
                 {
-                    borderColor = "#A0AAC1",
-                    backgroundColor = "rgba(160, 170, 193, 0.2)",
+                    borderColor = "rgba(3, 96, 25, 0.8)",
+                    backgroundColor = "rgba(160, 170, 193, 0.4)",
                     data = cumulativePnlPositionVM.Select(p => p.CumulativeDollarPnl)
                 }
-            }
+            },
         };
         await SetChart("CumulativePnlPos", "function", "line", CumPnlData);
 
+
+        decimal binSize = 0.02m;
+
+        var binCounts = tradesWithPnLVM
+            .Where(t => t.PercentPnl.HasValue)
+            .GroupBy(t => Math.Floor(t.PercentPnl.Value / binSize) * binSize)
+            .OrderBy(g => g.Key)
+            .Select(g => new { Bin = g.Key, Count = g.Count() });
+
+        var labels = binCounts.Select(x => $"{x.Bin * 100}% - {(x.Bin + binSize) * 100}%");
+        var data = binCounts.Select(x => x.Count);
+        var barColors = binCounts.Select(x => x.Bin >= 0 ? "rgba(14, 169, 9, 0.8)" : "rgba(245, 39, 39, 0.8)");
+        var formattedLabels = binCounts.Select(bc =>
+        {
+            var start = bc.Bin * 100;
+            var end = (bc.Bin + binSize) * 100;
+            return $"{start:N0}-{end:N0}%";
+        });
+
         var PnlPercentPerTrade = new
         {
-            labels = recentlyClosedTradesVM.Select((p, index) => index + 1),
+            labels = formattedLabels,
             datasets = new object[]
             {
                 new
                 {
-                    borderColor = "#A0AAC1",
-                    backgroundColor = "rgba(160, 170, 193, 0.2)",
-                    data = recentlyClosedTradesVM.Select(p => p.PercentPnl)
+                    //borderColor = "black",
+                    backgroundColor = barColors,
+                    data
                 }
             }
         };
@@ -160,7 +183,9 @@
     private async Task LoadPlots()
     {
         cumulativePnlPositionVM = await tradeService.GetCumulativePnl();
-        recentlyClosedTradesVM = await tradeService.GetRecentlyClosed();
+        tradesWithPnLVM = await tradeService.GetTradesWithPnl();
+        //recentlyClosedTradesVM = await tradeService.GetRecentlyClosed();
+
         StateHasChanged();
     }
 

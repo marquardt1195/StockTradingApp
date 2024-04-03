@@ -8,5 +8,7 @@ namespace StockTradingApp.Data.ViewModels
         public int TradeId { get; set; }
 
         public decimal CumulativeDollarPnl { get; set;}
+
+        public DateTime ShareBuyDate { get; set; }
     }
 }
